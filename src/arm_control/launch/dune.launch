@@ -1,0 +1,5 @@
+<launch>
+
+  <node name="move_group_interface" pkg="arm_control" type="move_group_interface" respawn="false" output="screen">
+
+</launch>

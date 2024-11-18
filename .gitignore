@@ -1,0 +1,22 @@
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# ROS build files #
+###################
+build/
+devel/
+install/
+
+# ROS logs #
+###########
+log/
+logs/
+
+# ROS package specific #
+########################
