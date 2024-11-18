@@ -1,5 +1,5 @@
 kuka_arm_controller:
-  type: position_controllers/JointTrajectoryController
+  type: effort_controllers/JointTrajectoryController
   joints:
     - joint1
     - joint2

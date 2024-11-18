@@ -13,7 +13,7 @@
         <inertial>
             <origin xyz="0.00169071554591047 0.0421254082322567 0.194181706745783" rpy="0 0 0" />
             <mass value="72.8456791935468" />
-            <inertia ixx="2.30199373615997" ixy="-0.0360498315195982" ixz="0.000324874783814514" iyy="1.86913360615281" iyz="0.0782647235264402" izz="2.34289554929916" />
+            <inertia ixx="2.30199373615997" ixy="-0.0360498315195982" ixz="0.000324874783814513" iyy="1.86913360615281" iyz="0.0782647235264402" izz="2.34289554929916" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -33,9 +33,9 @@
     </link>
     <link name="link1">
         <inertial>
-            <origin xyz="0.11850464020614 0.220299547158799 -0.0380338208389561" rpy="0 0 0" />
-            <mass value="24.868772466875" />
-            <inertia ixx="0.424656660940318" ixy="-0.152718990661531" ixz="0.0057839301853943" iyy="0.694343256191447" iyz="0.0275014415615462" izz="0.691966793599722" />
+            <origin xyz="0.1185 0.2203 -0.038034" rpy="0 0 0" />
+            <mass value="24.869" />
+            <inertia ixx="0.42466" ixy="-0.15272" ixz="0.0057839" iyy="0.69434" iyz="0.027501" izz="0.69197" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -43,7 +43,7 @@
                 <mesh filename="package://kuka_urdf/meshes/link1.STL" />
             </geometry>
             <material name="">
-                <color rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
+                <color rgba="0.66667 0.69804 0.76863 1" />
             </material>
         </visual>
         <collision>
@@ -53,7 +53,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="joint1" type="revolute">
+    <joint name="joint1" type="continuous">
         <origin xyz="0 0 0.357" rpy="1.5707963267949 0 -0.0844304651404737" />
         <parent link="base_link" />
         <child link="link1" />
@@ -62,9 +62,9 @@
     </joint>
     <link name="link2">
         <inertial>
-            <origin xyz="0.000189381328191018 0.303438179366152 0.155091041663287" rpy="0 0 0" />
-            <mass value="13.9287878174792" />
-            <inertia ixx="0.593276811357925" ixy="-0.000669711071031098" ixz="0.000213408868960804" iyy="0.0591609855193814" iyz="-0.0259775733733786" izz="0.593104027757824" />
+            <origin xyz="0.00018938 0.30344 0.15509" rpy="0 0 0" />
+            <mass value="13.929" />
+            <inertia ixx="0.59328" ixy="-0.00066971" ixz="0.00021341" iyy="0.059161" iyz="-0.025978" izz="0.5931" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -72,7 +72,7 @@
                 <mesh filename="package://kuka_urdf/meshes/link2.STL" />
             </geometry>
             <material name="">
-                <color rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
+                <color rgba="0.66667 0.69804 0.76863 1" />
             </material>
         </visual>
         <collision>
@@ -83,7 +83,7 @@
         </collision>
     </link>
     <joint name="joint2" type="revolute">
-        <origin xyz="0.285000000000002 0.278999999999999 0" rpy="0 0 0.860540949726414" />
+        <origin xyz="0.285 0.279 0" rpy="0 0 0.86054" />
         <parent link="link1" />
         <child link="link2" />
         <axis xyz="0 0 1" />
@@ -91,9 +91,9 @@
     </joint>
     <link name="link3">
         <inertial>
-            <origin xyz="-0.04700413682585 -0.0176944777360042 0.0276625988132613" rpy="0 0 0" />
-            <mass value="16.4189284998869" />
-            <inertia ixx="0.0681231627534655" ixy="-0.00829241688235473" ixz="0.0216145830359155" iyy="0.456794458430376" iyz="0.00443789755446783" izz="0.466037810686351" />
+            <origin xyz="-0.047004 -0.017694 0.027663" rpy="0 0 0" />
+            <mass value="16.419" />
+            <inertia ixx="0.068123" ixy="-0.0082924" ixz="0.021615" iyy="0.45679" iyz="0.0044379" izz="0.46604" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -101,7 +101,7 @@
                 <mesh filename="package://kuka_urdf/meshes/link3.STL" />
             </geometry>
             <material name="">
-                <color rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
+                <color rgba="0.66667 0.69804 0.76863 1" />
             </material>
         </visual>
         <collision>
@@ -112,7 +112,7 @@
         </collision>
     </link>
     <joint name="joint3" type="revolute">
-        <origin xyz="0 0.680000000000002 0" rpy="-3.14159265358979 0 2.25375212776307" />
+        <origin xyz="0 0.68 0" rpy="-3.1416 0 2.2538" />
         <parent link="link2" />
         <child link="link3" />
         <axis xyz="0 0 1" />
@@ -120,9 +120,9 @@
     </joint>
     <link name="link4">
         <inertial>
-            <origin xyz="0.0067405769845435 0.119400386730787 0.000146014653053195" rpy="0 0 0" />
+            <origin xyz="0.00674057698454339 0.119400386730787 0.000146014653052973" rpy="0 0 0" />
             <mass value="2.38078194379471" />
-            <inertia ixx="0.0138352592752633" ixy="-0.0012724264079337" ixz="-7.82821068847847E-06" iyy="0.00431375628504729" iyz="1.88244486105921E-06" izz="0.0140397202358096" />
+            <inertia ixx="0.0138352592752633" ixy="-0.0012724264079337" ixz="-7.82821068847934E-06" iyy="0.00431375628504729" iyz="1.88244486105927E-06" izz="0.0140397202358096" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -140,8 +140,8 @@
             </geometry>
         </collision>
     </link>
-    <joint name="joint4" type="revolute">
-        <origin xyz="-0.463043248331428 -0.0225000000000002 0.0330000000000008" rpy="3.14159265358979 -1.03989491708518 -1.57079632679491" />
+    <joint name="joint4" type="continuous">
+        <origin xyz="-0.46304 -0.0225 0.033" rpy="3.1416 -1.0399 -1.5708" />
         <parent link="link3" />
         <child link="link4" />
         <axis xyz="0 1 0" />
@@ -149,9 +149,9 @@
     </joint>
     <link name="link5">
         <inertial>
-            <origin xyz="-0.0158164557924105 9.19753188277639E-07 0.0563361689596945" rpy="0 0 0" />
-            <mass value="1.80204110195789" />
-            <inertia ixx="0.00560825722244345" ixy="-6.28023344812325E-07" ixz="0.000237113370095094" iyy="0.0114817936089823" iyz="-6.22321567802891E-07" izz="0.00875151562088488" />
+            <origin xyz="-0.0148056264551854 9.54624306492846E-07 0.0553736298877739" rpy="0 0 0" />
+            <mass value="1.73399119088313" />
+            <inertia ixx="0.00548862491579296" ixy="-6.2456122592214E-07" ixz="0.000169357529165341" iyy="0.0113184795859753" iyz="-6.27246910990676E-07" izz="0.00867767361478413" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -170,7 +170,7 @@
         </collision>
     </link>
     <joint name="joint5" type="revolute">
-        <origin xyz="0 0.203456751668462 0" rpy="1.69866961467948 0 -3.14159265358972" />
+        <origin xyz="0 0.20346 0" rpy="1.6987 0 -3.1416" />
         <parent link="link4" />
         <child link="link5" />
         <axis xyz="1 0 0" />
@@ -178,9 +178,9 @@
     </joint>
     <link name="link6">
         <inertial>
-            <origin xyz="1.56889810032368E-08 0.0607892928273234 1.35196158712603E-08" rpy="0 0 0" />
+            <origin xyz="1.56889810032368E-08 0.0607892928273234 1.35196158851381E-08" rpy="0 0 0" />
             <mass value="0.21569144856326" />
-            <inertia ixx="8.74922726987973E-05" ixy="-2.61522195322773E-13" ixz="-6.33886408899267E-10" iyy="0.000129565791188478" iyz="-1.35094136343338E-13" izz="8.74928287712893E-05" />
+            <inertia ixx="8.74922726987973E-05" ixy="-2.61522198373415E-13" ixz="-6.33886408897679E-10" iyy="0.000129565791188478" iyz="-1.35094123849602E-13" izz="8.74928287712893E-05" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -198,70 +198,98 @@
             </geometry>
         </collision>
     </link>
-    <joint name="joint6" type="revolute">
-        <origin xyz="-0.0160000000004577 0 0.185308798192681" rpy="1.57079632679489 0 2.12309994244728" />
+    <joint name="joint6" type="continuous">
+        <origin xyz="-0.016 0 0.18531" rpy="1.5708 0 2.1231" />
         <parent link="link5" />
         <child link="link6" />
         <axis xyz="0 1 0" />
         <limit lower="-3.14" upper="3.14" effort="100" velocity="1" />
     </joint>
+    <link name="link7">
+        <inertial>
+            <origin xyz="-0.090558425024217 -0.00753074319557223 -0.00177471297982487" rpy="0 0 0" />
+            <mass value="0.0603242087036552" />
+            <inertia ixx="3.113045679136E-05" ixy="-2.39312567925715E-06" ixz="-5.63969729817243E-07" iyy="5.97091767184042E-05" iyz="-4.68991284266896E-08" izz="5.98971341671003E-05" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://kuka_urdf/meshes/link7.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.219607843137255 0.333333333333333 1 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://kuka_urdf/meshes/link7.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="joint7" type="fixed">
+        <origin xyz="0 0.10377 0" rpy="-0.019531 0.017968 1.4875" />
+        <parent link="link6" />
+        <child link="link7" />
+        <axis xyz="0 0 0" />
+    </joint>
     <transmission name="trans_joint1">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint1">
-            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint1_motor">
-            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
     <transmission name="trans_joint2">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint2">
-            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint2_motor">
-            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
     <transmission name="trans_joint3">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint3">
-            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint3_motor">
-            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
     <transmission name="trans_joint4">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint4">
-            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint4_motor">
-            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
     <transmission name="trans_joint5">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint5">
-            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint5_motor">
-            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
     <transmission name="trans_joint6">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint6">
-            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="joint6_motor">
-            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
