@@ -1,0 +1,5 @@
+kuka_urdf
+/home/isaac/mechanical_arm/devel/.private/kuka_urdf/cmake.lock /home/isaac/mechanical_arm/devel/./cmake.lock
+/home/isaac/mechanical_arm/devel/.private/kuka_urdf/lib/pkgconfig/kuka_urdf.pc /home/isaac/mechanical_arm/devel/lib/pkgconfig/kuka_urdf.pc
+/home/isaac/mechanical_arm/devel/.private/kuka_urdf/share/kuka_urdf/cmake/kuka_urdfConfig-version.cmake /home/isaac/mechanical_arm/devel/share/kuka_urdf/cmake/kuka_urdfConfig-version.cmake
+/home/isaac/mechanical_arm/devel/.private/kuka_urdf/share/kuka_urdf/cmake/kuka_urdfConfig.cmake /home/isaac/mechanical_arm/devel/share/kuka_urdf/cmake/kuka_urdfConfig.cmake
