@@ -123,7 +123,7 @@ int main(int argc, char **argv)
     // visual_tools.trigger();
     // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
 
-    int order = 2; // 希尔伯特曲线的阶数
+    int order = 3; // 希尔伯特曲线的阶数
     std::vector<Point> hilbert_raw_points;
     hilbert(order, hilbert_raw_points, 0, 0);
 
@@ -156,19 +156,18 @@ int main(int argc, char **argv)
     /*****************************************************/
 
     // 将生成的点映射到半球面上
-double radius = 0.25; // 半径为0.25米，直径为0.5米
+double radius = 0.2; // 半径为0.2米
 geometry_msgs::Point sphere_center;
-sphere_center.x = 0.6; // 设置球心的x坐标
-sphere_center.y = 0.6; // 设置球心的y坐标
-sphere_center.z = 0.4; // 设置球心的z坐标
+sphere_center.x = 0.4; // 设置球心的x坐标
+sphere_center.y = 0.4; // 设置球心的y坐标
+sphere_center.z = 1.2; // 设置球心的z坐标
 
 // 设置笛卡尔路径的目标位姿
-std::vector<geometry_msgs::Pose> waypoints;
 geometry_msgs::Pose target_pose = move_group_interface.getCurrentPose().pose;
 
 for (const auto &point : hilbert_raw_points)
 {
-    double theta = point.x  * M_PI; // 将x映射到[0, π]
+    double theta = point.x * M_PI; // 将x映射到[0, π]
     double phi = point.y * M_PI; // 将y映射到[0, π]
     target_pose.position.x = sphere_center.x + radius * sin(phi) * cos(theta);
     target_pose.position.y = sphere_center.y + radius * sin(phi) * sin(theta);
@@ -196,34 +195,37 @@ for (const auto &point : hilbert_raw_points)
     Eigen::AngleAxisd angle_axis(rotation_angle, rotation_axis);
     Eigen::Quaterniond quaternion(angle_axis);
 
-    // 打印四元数
+    Eigen::Vector3d euler_angles = quaternion.toRotationMatrix().eulerAngles(2, 1, 0);
+
     // 打印目标位置和四元数
-    ROS_INFO("Target Position - x: %f, y: %f, z: %f", target_pose.position.x, target_pose.position.y, target_pose.position.z);
-    target_pose.orientation.x = quaternion.x();
-    target_pose.orientation.y = quaternion.y();
-    target_pose.orientation.z = quaternion.z();
-    target_pose.orientation.w = quaternion.w();
+    ROS_INFO("Target Position - x: %.6f, y: %.6f, z: %.6f", target_pose.position.x, target_pose.position.y, target_pose.position.z);
+    ROS_INFO("Target Orientation (Euler angles) - roll: %.6f, pitch: %.6f, yaw: %.6f", euler_angles[2], euler_angles[1], euler_angles[0]);
 
-    // target_pose.orientation.x = 0;
-    // target_pose.orientation.y = 0;
-    // target_pose.orientation.z = 0;
-    // target_pose.orientation.w = 1;
+    target_pose.orientation.x = std::round(quaternion.x() * 1e8) / 1e8;
+    target_pose.orientation.y = std::round(quaternion.y() * 1e8) / 1e8;
+    target_pose.orientation.z = std::round(quaternion.z() * 1e8) / 1e8;
+    target_pose.orientation.w = std::round(quaternion.w() * 1e8) / 1e8;
 
-    waypoints.push_back(target_pose);
+    // 设置目标位姿
+    move_group_interface.setPoseTarget(target_pose);
+
+    // 规划路径
+    moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+    bool success = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+    if (success)
+    {
+        // 执行路径
+        move_group_interface.execute(my_plan);
+        ROS_INFO("Successfully planned and executed Cartesian path.");
+    }
+    else
+    {
+        ROS_WARN("Failed to plan Cartesian path.");
+    }
 }
-
-// 规划笛卡尔路径
-moveit_msgs::RobotTrajectory trajectory;
-const double eef_step = 0.01;
-double fraction = move_group_interface.computeCartesianPath(waypoints, eef_step, trajectory);
-
-ROS_INFO("Successfully computed Cartesian path (%.2f%% achieved)", fraction * 100.0);
-moveit::planning_interface::MoveGroupInterface::Plan cartesian_plan;
-cartesian_plan.trajectory_ = trajectory;
-move_group_interface.execute(cartesian_plan);
-
-
 
 ros::shutdown();
 return 0;
+
 }
