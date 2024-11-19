@@ -4,9 +4,10 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /Trajectory1
         - /Trajectory1/Links1
+        - /Trajectory1/Links1/link71
         - /RobotModel1/Links1
+        - /RobotModel1/Links1/link71
       Splitter Ratio: 0.5
     Tree Height: 1028
   - Class: rviz/Help
@@ -128,8 +129,8 @@ Visualization Manager:
       Velocity_Scaling_Factor: 0.1
     - Class: moveit_rviz_plugin/Trajectory
       Color Enabled: false
-      Enabled: true
-      Interrupt Display: false
+      Enabled: false
+      Interrupt Display: true
       Links:
         All Links Enabled: true
         Expand Joint Details: false
@@ -174,7 +175,7 @@ Visualization Manager:
         link7:
           Alpha: 1
           Show Axes: false
-          Show Trail: false
+          Show Trail: true
           Value: true
         world:
           Alpha: 1
@@ -187,62 +188,80 @@ Visualization Manager:
       Robot Description: robot_description
       Show Robot Collision: false
       Show Robot Visual: true
-      Show Trail: true
+      Show Trail: false
       State Display Time: 3x
       Trail Step Size: 1
       Trajectory Topic: /move_group/display_planned_path
       Use Sim Time: false
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
-      Enabled: false
+      Enabled: true
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link4:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link5:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link6:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link7:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: true
+          Value: true
+        world:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
       Update Interval: 0
-      Value: false
+      Value: true
       Visual Enabled: true
     - Class: rviz/MarkerArray
-      Enabled: true
+      Enabled: false
       Marker Topic: /rviz_visual_tools
       Name: MarkerArray
       Namespaces:
-        Path: true
-        Sphere: true
-        Text: true
+        {}
       Queue Size: 100
-      Value: true
-    - Alpha: 1
-      Buffer Length: 1
-      Class: rviz/Path
-      Color: 25; 255; 0
-      Enabled: true
-      Head Diameter: 0.30000001192092896
-      Head Length: 0.20000000298023224
-      Length: 0.30000001192092896
-      Line Style: Lines
-      Line Width: 0.029999999329447746
-      Name: Path
-      Offset:
-        X: 0
-        Y: 0
-        Z: 0
-      Pose Color: 255; 85; 255
-      Pose Style: None
-      Queue Size: 10
-      Radius: 0.029999999329447746
-      Shaft Diameter: 0.10000000149011612
-      Shaft Length: 0.10000000149011612
-      Topic: ""
-      Unreliable: false
-      Value: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -259,7 +278,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 5.074636459350586
+      Distance: 2.638782501220703
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -267,17 +286,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.75
       Focal Point:
-        X: 0.5926022529602051
-        Y: -0.27167564630508423
-        Z: -0.11005757749080658
+        X: 0.511856198310852
+        Y: 0.10973767936229706
+        Z: 0.42412081360816956
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.36499881744384766
+      Pitch: 0.41999825835227966
       Target Frame: base_link
-      Yaw: 0.621762752532959
+      Yaw: 1.2317684888839722
     Saved: ~
 Window Geometry:
   Displays:
