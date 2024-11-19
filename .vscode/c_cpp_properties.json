@@ -3,7 +3,13 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/usr/include/**",
+                "/opt/ros/noetic/include/**",
+                "/opt/ros/noetic/include/moveit_msgs/**",
+                "/home/isaac/ws_moveit/src/moveit/moveit_ros/**",
+                "/home/isaac/ws_moveit/src/moveit_visual_tools/**"
+
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
