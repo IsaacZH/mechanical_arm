@@ -13,6 +13,97 @@ struct Point
     double x, y;
 };
 
+void hilbert(int n, std::vector<Point> &points, double x0, double y0);
+void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterface &move_group_interface,
+                                     const moveit::core::JointModelGroup *joint_model_group,
+                                     moveit_visual_tools::MoveItVisualTools &visual_tools,
+                                     const std::vector<geometry_msgs::Pose> &target_poses,
+                                     const geometry_msgs::Point &sphere_center,
+                                     double eef_step,
+                                     int max_attempts,
+                                     int per_execute_cnt);
+std::vector<Point> generateCycloid(const std::vector<Point> &hilbertPoints, double radius, int frequency);
+void missionOne(moveit::planning_interface::MoveGroupInterface &move_group_interface,
+                const moveit::core::JointModelGroup *joint_model_group,
+                moveit_visual_tools::MoveItVisualTools &visual_tools,
+                const Eigen::Isometry3d &text_pose);
+void missionTwo(moveit::planning_interface::MoveGroupInterface &move_group_interface,
+                const moveit::core::JointModelGroup *joint_model_group,
+                moveit_visual_tools::MoveItVisualTools &visual_tools,
+                const Eigen::Isometry3d &text_pose);
+void additonalTaskOne(moveit::planning_interface::MoveGroupInterface &move_group_interface,
+                      const moveit::core::JointModelGroup *joint_model_group,
+                      moveit_visual_tools::MoveItVisualTools &visual_tools,
+                      const Eigen::Isometry3d &text_pose);
+void additonalTaskTwo(moveit::planning_interface::MoveGroupInterface &move_group_interface,
+                      const moveit::core::JointModelGroup *joint_model_group,
+                      moveit_visual_tools::MoveItVisualTools &visual_tools,
+                      const Eigen::Isometry3d &text_pose);
+
+int main(int argc, char **argv)
+{
+
+    /********************************************************************************* */
+    /*************************             初始化           ************************** */
+    /********************************************************************************* */
+    ros::init(argc, argv, "move_group_interface_tutorial");
+    ros::NodeHandle node_handle;
+    ros::AsyncSpinner spinner(1);
+    spinner.start();
+
+    static const std::string PLANNING_GROUP = "kuka_arm";
+    moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
+    moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
+
+    const moveit::core::JointModelGroup *joint_model_group = move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
+
+    namespace rvt = rviz_visual_tools;
+    moveit_visual_tools::MoveItVisualTools visual_tools("base_link");
+    visual_tools.deleteAllMarkers();
+    visual_tools.loadRemoteControl();
+    // 文字显示
+    Eigen::Isometry3d text_pose = Eigen::Isometry3d::Identity();
+    text_pose.translation().z() = 1.0;
+    text_pose.translation().y() = -1.0;
+    text_pose.translation().x() = -1.0;
+    visual_tools.publishText(text_pose, "MoveGroupInterface Demo", rvt::WHITE, rvt::XLARGE);
+    visual_tools.trigger();
+    visual_tools.prompt("Press 'next' to move to Point A");
+
+    /********************************************************************************* */
+    /*************************             任务一           ************************** */
+    /********************************************************************************* */
+    missionOne(move_group_interface, joint_model_group, visual_tools, text_pose);
+    visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
+    visual_tools.deleteAllMarkers();
+    visual_tools.trigger();
+    /********************************************************************************* */
+    /*************************             任务二           ************************** */
+    /********************************************************************************* */
+    // missionTwo(move_group_interface, joint_model_group, visual_tools, text_pose);
+    // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
+    // visual_tools.deleteAllMarkers();
+    // visual_tools.trigger();
+
+    /********************************************************************************* */
+    /***********************             附加任务一           ************************* */
+    /********************************************************************************* */
+    // additonalTaskOne(move_group_interface, joint_model_group, visual_tools, text_pose);
+    // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
+    // visual_tools.deleteAllMarkers();
+    // visual_tools.trigger();
+    /********************************************************************************* */
+    /***********************             附加任务二           ************************* */
+    /********************************************************************************* */
+    additonalTaskTwo(move_group_interface, joint_model_group, visual_tools, text_pose);
+    visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
+    visual_tools.deleteAllMarkers();
+    visual_tools.trigger();
+
+    ros::shutdown();
+    return 0;
+}
+
 // 生成希尔伯特曲线的递归函数
 void hilbert(int n, std::vector<Point> &points, double x0, double y0)
 {
@@ -47,6 +138,8 @@ void hilbert(int n, std::vector<Point> &points, double x0, double y0)
 }
 
 void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterface &move_group_interface,
+                                     const moveit::core::JointModelGroup *joint_model_group,
+                                     moveit_visual_tools::MoveItVisualTools &visual_tools,
                                      const std::vector<geometry_msgs::Pose> &target_poses,
                                      const geometry_msgs::Point &sphere_center,
                                      double eef_step,
@@ -102,8 +195,8 @@ void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterf
     for (const auto &waypoint : waypoints)
     {
         temp_points.push_back(waypoint);
-        temp_point_cnt ++;
-        if (temp_point_cnt >= per_execute_cnt) //满数量就规划一次
+        temp_point_cnt++;
+        if (temp_point_cnt >= per_execute_cnt) // 满数量就规划一次
         {
             while (fraction < 0.99 && attempts < max_attempts)
             {
@@ -116,7 +209,8 @@ void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterf
                 ROS_INFO("Successfully computed Cartesian path (%.2f%% achieved) after %d attempts", fraction * 100.0, attempts);
                 moveit::planning_interface::MoveGroupInterface::Plan cartesian_plan;
                 cartesian_plan.trajectory_ = trajectory;
-                // visual_tools.publishTrajectoryLine(trajectory, joint_model_group);
+                visual_tools.publishTrajectoryLine(trajectory, joint_model_group);
+                visual_tools.trigger();
                 move_group_interface.execute(cartesian_plan);
             }
             else
@@ -163,82 +257,65 @@ std::vector<Point> generateCycloid(const std::vector<Point> &hilbertPoints, doub
     return cycloidPoints;
 }
 
-int main(int argc, char **argv)
+void missionOne(moveit::planning_interface::MoveGroupInterface &move_group_interface,
+                const moveit::core::JointModelGroup *joint_model_group,
+                moveit_visual_tools::MoveItVisualTools &visual_tools,
+                const Eigen::Isometry3d &text_pose)
 {
-    ros::init(argc, argv, "move_group_interface_tutorial");
-    ros::NodeHandle node_handle;
-    ros::AsyncSpinner spinner(1);
-    spinner.start();
-
-    static const std::string PLANNING_GROUP = "kuka_arm";
-    moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
-    moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
-
-    const moveit::core::JointModelGroup *joint_model_group = move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
-
     namespace rvt = rviz_visual_tools;
-    moveit_visual_tools::MoveItVisualTools visual_tools("world");
-    visual_tools.deleteAllMarkers();
-    visual_tools.loadRemoteControl();
-    Eigen::Isometry3d text_pose = Eigen::Isometry3d::Identity();
-    text_pose.translation().z() = 1.0;
-    visual_tools.publishText(text_pose, "MoveGroupInterface Demo", rvt::WHITE, rvt::XLARGE);
-    visual_tools.trigger();
-    // visual_tools.prompt("Press 'next' to move to Point A");
+    std::vector<double> joint_group_positions;
+    moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
+    current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
 
-    // // 设置关节空间目标
-    // std::vector<double> joint_group_positions;
-    // moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
-    // current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
+    // 设置A点的关节位置
+    joint_group_positions[0] = -M_PI / 2;
+    joint_group_positions[1] = M_PI / 6;
 
-    // // 设置A点的关节位置
-    // joint_group_positions[0] = -M_PI / 2; // 示例值，请根据实际情况调整
-    // joint_group_positions[1] = M_PI / 6;  // 示例值，请根据实际情况调整
-    // // ...设置其他关节位置...
+    move_group_interface.setJointValueTarget(joint_group_positions);
 
-    // move_group_interface.setJointValueTarget(joint_group_positions);
+    // 规划并移动到A点
+    moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+    bool success = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    if (success)
+    {
+        // 可视化轨迹
+        visual_tools.publishText(text_pose, "Moving to Point A", rvt::WHITE, rvt::XLARGE);
+        visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+        visual_tools.trigger();
+        move_group_interface.move();
+    }
+    else
+    {
+        ROS_ERROR("Failed to plan to A point");
+    }
 
-    // // 规划并移动到A点
-    // moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-    // bool success = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-    // if (success)
-    // {
-    //     move_group_interface.move();
-    // }
-    // else
-    // {
-    //     ROS_ERROR("Failed to plan to A point");
-    // }
+    visual_tools.prompt("Press 'next' to move to Home");
 
-    // // 可视化轨迹
-    // visual_tools.publishText(text_pose, "Moving to Point A", rvt::WHITE, rvt::XLARGE);
-    // //   visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
-    // visual_tools.trigger();
-    // visual_tools.prompt("Press 'next' to move to Point B");
+    // 设置home姿态为目标位置
+    move_group_interface.setNamedTarget("home");
 
-    // // 设置B点的关节位置
-    // joint_group_positions[0] = M_PI / 2; // 示例值，请根据实际情况调整
-    // joint_group_positions[1] = M_PI / 6; // 示例值，请根据实际情况调整
-    // // ...设置其他关节位置...
+    // 规划并移动到home姿态
+    success = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    if (success)
+    {
+        // 可视化轨迹
+        visual_tools.publishText(text_pose, "Moving to Home Pose", rvt::WHITE, rvt::XLARGE);
+        visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+        visual_tools.trigger();
+        move_group_interface.move();
+    }
+    else
+    {
+        ROS_INFO("Failed to move to Home Pose");
+    }
+}
 
-    // move_group_interface.setJointValueTarget(joint_group_positions);
-
-    // // 规划并移动到B点
-    // success = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-    // if (success)
-    // {
-    //     move_group_interface.move();
-    // }
-    // else
-    // {
-    //     ROS_INFO("Failed to move to Point B");
-    // }
-
-    // // 可视化轨迹
-    // visual_tools.publishText(text_pose, "Moving to Point B", rvt::WHITE, rvt::XLARGE);
-    // //   visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
-    // visual_tools.trigger();
-    // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
+void missionTwo(moveit::planning_interface::MoveGroupInterface &move_group_interface,
+                const moveit::core::JointModelGroup *joint_model_group,
+                moveit_visual_tools::MoveItVisualTools &visual_tools,
+                const Eigen::Isometry3d &text_pose)
+{
+    namespace rvt = rviz_visual_tools;
 
     int order = 4; // 希尔伯特曲线的阶数
     std::vector<Point> hilbert_raw_points;
@@ -248,61 +325,10 @@ int main(int argc, char **argv)
     double w = 1.2;
     double h = 1.2;
     // // 设置笛卡尔路径的目标位姿
-    // std::vector<geometry_msgs::Pose> waypoints;
+    std::vector<geometry_msgs::Pose> waypoints;
     geometry_msgs::Pose target_pose = move_group_interface.getCurrentPose().pose;
 
-    // for (const auto &point : hilbert_raw_points)
-    // {
-    //     target_pose.position.x = 0.8; // 固定高度，确保末端垂直于运动平面
-    //     target_pose.position.y = (point.x) * w;
-    //     target_pose.position.z = (point.y + 0.5) * h + 0.1;
-    //     waypoints.push_back(target_pose);
-    // }
-
-    // // 规划笛卡尔路径
-    // moveit_msgs::RobotTrajectory trajectory;
-    // const double eef_step = 0.01;
-    // double fraction = move_group_interface.computeCartesianPath(waypoints, eef_step, trajectory);
-
-    // ROS_INFO("Successfully computed Cartesian path (%.2f%% achieved)", fraction * 100.0);
-    // visual_tools.publishText(text_pose, "Executing Cartesian Path", rvt::WHITE, rvt::XLARGE);
-    // visual_tools.publishTrajectoryLine(trajectory, joint_model_group);
-    // visual_tools.trigger();
-    // moveit::planning_interface::MoveGroupInterface::Plan cartesian_plan;
-    // cartesian_plan.trajectory_ = trajectory;
-    // move_group_interface.execute(cartesian_plan);
-
-    /*****************************************************/
-    // 附加任务一：现有直径为0.5m的半球体，在笛卡尔空间下，机械臂末端在空
-    // 间实现半球面的 4 阶希尔伯特曲线运动（即将平面的希尔伯特曲线映射到半球
-    // 面），且机械臂末端始终垂直于当前运动点在半球上的切平面），并显示轨迹；
-
-    // 将生成的点映射到半球面上
-    double radius = 0.25; // 半径为0.25米，直径为0.5米
-    geometry_msgs::Point sphere_center;
-    sphere_center.x = 0.65; // 设置球心的x坐标
-    sphere_center.y = 0.65; // 设置球心的y坐标
-    sphere_center.z = 0.65; // 设置球心的z坐标
-    // 设置笛卡尔路径的目标位姿
-    geometry_msgs::Pose temp_pose;
-    std::vector<geometry_msgs::Pose> waypoints;
-
-    // for (const auto &point : hilbert_raw_points)
-    // {
-    //     double theta = point.x * M_PI; // 将x映射到[0, π]
-    //     double phi = point.y * M_PI;   // 将y映射到[0, π]
-    //     temp_pose.position.x = sphere_center.x + radius * sin(phi) * cos(theta);
-    //     temp_pose.position.y = sphere_center.y + radius * sin(phi) * sin(theta);
-    //     temp_pose.position.z = sphere_center.z + radius * cos(phi);
-    //     waypoints.push_back(temp_pose);
-    // }
-    // Execute_CartesianPath_AllAtOnce(move_group_interface, waypoints, sphere_center, 0.05, 1000, 10000);
-    // waypoints.clear();//清空路径
-    // //附加任务二：基于附加任务一，将希尔伯特曲线改为希尔伯特曲线作为引导线
-    // //           的摆线轨迹，重新实现附加任务一，并显示轨迹；
-    std::vector<Point> cycloid_points = generateCycloid(hilbert_raw_points, 0.01, 5); // 生成摆线轨迹
-
-    for (const auto &point : cycloid_points)
+    for (const auto &point : hilbert_raw_points)
     {
         target_pose.position.x = 0.8; // 固定高度，确保末端垂直于运动平面
         target_pose.position.y = (point.x) * w;
@@ -317,9 +343,71 @@ int main(int argc, char **argv)
 
     ROS_INFO("Successfully computed Cartesian path (%.2f%% achieved)", fraction * 100.0);
     visual_tools.publishText(text_pose, "Executing Cartesian Path", rvt::WHITE, rvt::XLARGE);
-    visual_tools.publishTrajectoryLine(trajectory, joint_model_group);
+    visual_tools.publishTrajectoryLine(trajectory, joint_model_group); // 可视化轨迹
+    moveit::planning_interface::MoveGroupInterface::Plan cartesian_plan;
+    cartesian_plan.trajectory_ = trajectory;
     visual_tools.trigger();
-    waypoints.clear();
+    move_group_interface.execute(cartesian_plan);
+}
+
+void additonalTaskOne(moveit::planning_interface::MoveGroupInterface &move_group_interface,
+                      const moveit::core::JointModelGroup *joint_model_group,
+                      moveit_visual_tools::MoveItVisualTools &visual_tools,
+                      const Eigen::Isometry3d &text_pose)
+{
+    namespace rvt = rviz_visual_tools;
+
+    // 生成希尔伯特曲线的原始点
+    int order = 3; // 希尔伯特曲线的阶数
+    std::vector<Point> hilbert_raw_points;
+    hilbert(order, hilbert_raw_points, 0, 0);
+
+    // 将生成的点映射到半球面上
+    double radius = 0.25; // 半径为0.25米，直径为0.5米
+    geometry_msgs::Point sphere_center;
+    sphere_center.x = 0.65; // 设置球心的x坐标
+    sphere_center.y = 0.65; // 设置球心的y坐标
+    sphere_center.z = 0.65; // 设置球心的z坐标
+    // 设置笛卡尔路径的目标位姿
+    geometry_msgs::Pose temp_pose;
+    std::vector<geometry_msgs::Pose> waypoints;
+
+    for (const auto &point : hilbert_raw_points)
+    {
+        double theta = point.x * M_PI; // 将x映射到[0, π]
+        double phi = point.y * M_PI;   // 将y映射到[0, π]
+        temp_pose.position.x = sphere_center.x + radius * sin(phi) * cos(theta);
+        temp_pose.position.y = sphere_center.y + radius * sin(phi) * sin(theta);
+        temp_pose.position.z = sphere_center.z + radius * cos(phi);
+        waypoints.push_back(temp_pose);
+    }
+    Execute_CartesianPath_AllAtOnce(move_group_interface, joint_model_group, visual_tools, waypoints, sphere_center, 0.05, 1000);
+}
+
+void additonalTaskTwo(moveit::planning_interface::MoveGroupInterface &move_group_interface,
+                      const moveit::core::JointModelGroup *joint_model_group,
+                      moveit_visual_tools::MoveItVisualTools &visual_tools,
+                      const Eigen::Isometry3d &text_pose)
+{
+    namespace rvt = rviz_visual_tools;
+
+    // 生成希尔伯特曲线的原始点
+    int order = 3; // 希尔伯特曲线的阶数
+    std::vector<Point> hilbert_raw_points;
+    hilbert(order, hilbert_raw_points, 0, 0);
+
+    // 生成完整的摆线点
+    std::vector<Point> cycloid_points = generateCycloid(hilbert_raw_points, 0.01, 5);
+
+    // 将生成的点映射到半球面上
+    double radius = 0.25; // 半径为0.25米，直径为0.5米
+    geometry_msgs::Point sphere_center;
+    sphere_center.x = 0.65; // 设置球心的x坐标
+    sphere_center.y = 0.65; // 设置球心的y坐标
+    sphere_center.z = 0.65; // 设置球心的z坐标
+    // 设置笛卡尔路径的目标位姿
+    geometry_msgs::Pose temp_pose;
+    std::vector<geometry_msgs::Pose> waypoints;
 
     for (const auto &point : cycloid_points)
     {
@@ -330,12 +418,5 @@ int main(int argc, char **argv)
         temp_pose.position.z = sphere_center.z + radius * cos(phi);
         waypoints.push_back(temp_pose);
     }
-
-
-    Execute_CartesianPath_AllAtOnce(move_group_interface, waypoints, sphere_center, 0.01, 1000, 20);
-
-    waypoints.clear();
-
-    ros::shutdown();
-    return 0;
+    Execute_CartesianPath_AllAtOnce(move_group_interface, joint_model_group, visual_tools, waypoints, sphere_center, 0.05, 1000);
 }

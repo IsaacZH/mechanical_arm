@@ -4,10 +4,12 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /MotionPlanning1
+        - /Trajectory1
         - /Trajectory1/Links1
-        - /Trajectory1/Links1/link71
         - /RobotModel1/Links1
         - /RobotModel1/Links1/link71
+        - /MarkerArray1
       Splitter Ratio: 0.5
     Tree Height: 1028
   - Class: rviz/Help
@@ -76,6 +78,50 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
+          base_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link3:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link4:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link5:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link6:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link7:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
         Loop Animation: true
         Robot Alpha: 0.5
         Robot Color: 150; 50; 150
@@ -122,6 +168,50 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
+          base_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link3:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link4:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link5:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link6:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link7:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
         Robot Alpha: 0.5
         Show Robot Collision: false
         Show Robot Visual: true
@@ -137,50 +227,6 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link1:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link3:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link4:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link5:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link6:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link7:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: true
-          Value: true
-        world:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
       Loop Animation: false
       Name: Trajectory
       Robot Alpha: 0.5
@@ -255,13 +301,15 @@ Visualization Manager:
       Value: true
       Visual Enabled: true
     - Class: rviz/MarkerArray
-      Enabled: false
+      Enabled: true
       Marker Topic: /rviz_visual_tools
       Name: MarkerArray
       Namespaces:
-        {}
+        Path: true
+        Sphere: true
+        Text: true
       Queue Size: 100
-      Value: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -278,7 +326,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.638782501220703
+      Distance: 3.57218861579895
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -286,17 +334,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.75
       Focal Point:
-        X: 0.511856198310852
-        Y: 0.10973767936229706
-        Z: 0.42412081360816956
+        X: 0.3972306251525879
+        Y: 0.5886006355285645
+        Z: 1.22211754322052
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.41999825835227966
+      Pitch: 0.03999751806259155
       Target Frame: base_link
-      Yaw: 1.2317684888839722
+      Yaw: 5.991770267486572
     Saved: ~
 Window Geometry:
   Displays:
@@ -310,7 +358,7 @@ Window Geometry:
     collapsed: false
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000001000000000000024900000503fc020000000afb000000100044006900730070006c006100790073010000003b00000493000000c700fffffffb0000000800480065006c00700000000342000000bb0000006e00fffffffb0000000a00560069006500770073000000010c000000a4000000a000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006700000001b60000017f0000016900fffffffb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fb00000024005200760069007a00560069007300750061006c0054006f006f006c007300470075006901000004d40000006a0000003f00fffffffb0000003c005400720061006a006500630074006f007200790020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016000007a50000050300000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000001000000000000024900000503fc020000000afb000000100044006900730070006c006100790073010000003b00000493000000c700fffffffb0000000800480065006c00700000000342000000bb0000006e00fffffffb0000000a00560069006500770073000000010c000000a4000000a000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067000000036f0000017f0000016900fffffffb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fb00000024005200760069007a00560069007300750061006c0054006f006f006c007300470075006901000004d40000006a0000003f00fffffffb0000003c005400720061006a006500630074006f007200790020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016000007a50000050300000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   RvizVisualToolsGui:
     collapsed: false
   Trajectory - Trajectory Slider:
@@ -318,5 +366,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 2548
-  X: 0
-  Y: 0
+  X: -32
+  Y: -32
