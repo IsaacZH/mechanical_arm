@@ -1,0 +1,6 @@
+trac_ik/trac_ik_kinematics_plugin
+/home/isaac/mechanical_arm/devel/.private/trac_ik_kinematics_plugin/cmake.lock /home/isaac/mechanical_arm/devel/./cmake.lock
+/home/isaac/mechanical_arm/devel/.private/trac_ik_kinematics_plugin/lib/libtrac_ik_kinematics_plugin.so /home/isaac/mechanical_arm/devel/lib/libtrac_ik_kinematics_plugin.so
+/home/isaac/mechanical_arm/devel/.private/trac_ik_kinematics_plugin/lib/pkgconfig/trac_ik_kinematics_plugin.pc /home/isaac/mechanical_arm/devel/lib/pkgconfig/trac_ik_kinematics_plugin.pc
+/home/isaac/mechanical_arm/devel/.private/trac_ik_kinematics_plugin/share/trac_ik_kinematics_plugin/cmake/trac_ik_kinematics_pluginConfig.cmake /home/isaac/mechanical_arm/devel/share/trac_ik_kinematics_plugin/cmake/trac_ik_kinematics_pluginConfig.cmake
+/home/isaac/mechanical_arm/devel/.private/trac_ik_kinematics_plugin/share/trac_ik_kinematics_plugin/cmake/trac_ik_kinematics_pluginConfig-version.cmake /home/isaac/mechanical_arm/devel/share/trac_ik_kinematics_plugin/cmake/trac_ik_kinematics_pluginConfig-version.cmake

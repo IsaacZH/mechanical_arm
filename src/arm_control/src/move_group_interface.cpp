@@ -73,10 +73,10 @@ int main(int argc, char **argv)
     /********************************************************************************* */
     /*************************             任务一           ************************** */
     /********************************************************************************* */
-    missionOne(move_group_interface, joint_model_group, visual_tools, text_pose);
-    visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
-    visual_tools.deleteAllMarkers();
-    visual_tools.trigger();
+    // missionOne(move_group_interface, joint_model_group, visual_tools, text_pose);
+    // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
+    // visual_tools.deleteAllMarkers();
+    // visual_tools.trigger();
     /********************************************************************************* */
     /*************************             任务二           ************************** */
     /********************************************************************************* */
@@ -88,17 +88,17 @@ int main(int argc, char **argv)
     /********************************************************************************* */
     /***********************             附加任务一           ************************* */
     /********************************************************************************* */
-    // additonalTaskOne(move_group_interface, joint_model_group, visual_tools, text_pose);
-    // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
-    // visual_tools.deleteAllMarkers();
-    // visual_tools.trigger();
-    /********************************************************************************* */
-    /***********************             附加任务二           ************************* */
-    /********************************************************************************* */
-    additonalTaskTwo(move_group_interface, joint_model_group, visual_tools, text_pose);
+    additonalTaskOne(move_group_interface, joint_model_group, visual_tools, text_pose);
     visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
     visual_tools.deleteAllMarkers();
     visual_tools.trigger();
+    /********************************************************************************* */
+    /***********************             附加任务二           ************************* */
+    /********************************************************************************* */
+    // additonalTaskTwo(move_group_interface, joint_model_group, visual_tools, text_pose);
+    // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
+    // visual_tools.deleteAllMarkers();
+    // visual_tools.trigger();
 
     ros::shutdown();
     return 0;
@@ -192,11 +192,12 @@ void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterf
     double fraction = 0.0;
     int attempts = 0;
     int temp_point_cnt;
-    for (const auto &waypoint : waypoints)
+    for (size_t i = 0; i < waypoints.size(); ++i)
     {
+        const auto &waypoint = waypoints[i];
         temp_points.push_back(waypoint);
         temp_point_cnt++;
-        if (temp_point_cnt >= per_execute_cnt) // 满数量就规划一次
+        if (temp_point_cnt >= per_execute_cnt || i == waypoints.size() - 1) // 满数量就规划一次
         {
             while (fraction < 0.99 && attempts < max_attempts)
             {
@@ -358,7 +359,7 @@ void additonalTaskOne(moveit::planning_interface::MoveGroupInterface &move_group
     namespace rvt = rviz_visual_tools;
 
     // 生成希尔伯特曲线的原始点
-    int order = 3; // 希尔伯特曲线的阶数
+    int order = 4; // 希尔伯特曲线的阶数
     std::vector<Point> hilbert_raw_points;
     hilbert(order, hilbert_raw_points, 0, 0);
 
@@ -375,13 +376,13 @@ void additonalTaskOne(moveit::planning_interface::MoveGroupInterface &move_group
     for (const auto &point : hilbert_raw_points)
     {
         double theta = point.x * M_PI; // 将x映射到[0, π]
-        double phi = point.y * M_PI;   // 将y映射到[0, π]
+        double phi = point.y * (5.0 / 6.0) * M_PI;   // 将y映射到[0, π]
         temp_pose.position.x = sphere_center.x + radius * sin(phi) * cos(theta);
         temp_pose.position.y = sphere_center.y + radius * sin(phi) * sin(theta);
         temp_pose.position.z = sphere_center.z + radius * cos(phi);
         waypoints.push_back(temp_pose);
     }
-    Execute_CartesianPath_AllAtOnce(move_group_interface, joint_model_group, visual_tools, waypoints, sphere_center, 0.05, 1000);
+    Execute_CartesianPath_AllAtOnce(move_group_interface, joint_model_group, visual_tools, waypoints, sphere_center, 0.05, 100, 5000);
 }
 
 void additonalTaskTwo(moveit::planning_interface::MoveGroupInterface &move_group_interface,
@@ -392,7 +393,7 @@ void additonalTaskTwo(moveit::planning_interface::MoveGroupInterface &move_group
     namespace rvt = rviz_visual_tools;
 
     // 生成希尔伯特曲线的原始点
-    int order = 3; // 希尔伯特曲线的阶数
+    int order = 4; // 希尔伯特曲线的阶数
     std::vector<Point> hilbert_raw_points;
     hilbert(order, hilbert_raw_points, 0, 0);
 
@@ -412,11 +413,11 @@ void additonalTaskTwo(moveit::planning_interface::MoveGroupInterface &move_group
     for (const auto &point : cycloid_points)
     {
         double theta = point.x * M_PI; // 将x映射到[0, π]
-        double phi = point.y * M_PI;   // 将y映射到[0, π]
+        double phi = point.y * (5.0 / 6.0) * M_PI;   // 将y映射到[0, π]
         temp_pose.position.x = sphere_center.x + radius * sin(phi) * cos(theta);
         temp_pose.position.y = sphere_center.y + radius * sin(phi) * sin(theta);
         temp_pose.position.z = sphere_center.z + radius * cos(phi);
         waypoints.push_back(temp_pose);
     }
-    Execute_CartesianPath_AllAtOnce(move_group_interface, joint_model_group, visual_tools, waypoints, sphere_center, 0.05, 1000);
+    Execute_CartesianPath_AllAtOnce(move_group_interface, joint_model_group, visual_tools, waypoints, sphere_center, 0.05, 1000, 5000);
 }
