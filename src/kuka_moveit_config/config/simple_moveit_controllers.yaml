@@ -10,3 +10,10 @@ controller_list:
       - joint4
       - joint5
       - joint6
+  - name: table_arm_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: True
+    joints:
+      - tableJoint1
+      - tableJoint2

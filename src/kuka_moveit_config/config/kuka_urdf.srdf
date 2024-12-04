@@ -14,6 +14,14 @@
     </group>
     <group name="kuka_hand">
         <link name="link7"/>
+        <joint name="joint7"/>
+    </group>
+    <group name="table_arm">
+        <chain base_link="tableBase" tip_link="tableLink2"/>
+    </group>
+    <group name="table_hand">
+        <link name="tableEeffortLink"/>
+        <joint name="tableEeffortJoint"/>
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="home" group="kuka_arm">
@@ -24,13 +32,26 @@
         <joint name="joint5" value="0"/>
         <joint name="joint6" value="0"/>
     </group_state>
+    <group_state name="home" group="table_arm">
+        <joint name="tableJoint1" value="0"/>
+        <joint name="tableJoint2" value="0"/>
+    </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="hand" parent_link="link6" group="kuka_hand" parent_group="kuka_arm"/>
+    <end_effector name="kuka_effector" parent_link="link6" group="kuka_hand" parent_group="kuka_arm"/>
+    <end_effector name="table_effector" parent_link="tableLink2" group="table_hand" parent_group="table_arm"/>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="world_joint" type="fixed" parent_frame="world" child_link="base_link"/>
+    <virtual_joint name="world_virtualJoint" type="fixed" parent_frame="world" child_link="base_link"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="base_link" link2="link1" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="tabelLink1" reason="Never"/>
+    <disable_collisions link1="base_link" link2="tableBase" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="tableEeffortLink" reason="Never"/>
+    <disable_collisions link1="base_link" link2="tableLink2" reason="Never"/>
     <disable_collisions link1="link1" link2="link2" reason="Adjacent"/>
+    <disable_collisions link1="link1" link2="tabelLink1" reason="Never"/>
+    <disable_collisions link1="link1" link2="tableBase" reason="Never"/>
+    <disable_collisions link1="link1" link2="tableEeffortLink" reason="Never"/>
+    <disable_collisions link1="link1" link2="tableLink2" reason="Never"/>
     <disable_collisions link1="link2" link2="link3" reason="Adjacent"/>
     <disable_collisions link1="link2" link2="link4" reason="Never"/>
     <disable_collisions link1="link3" link2="link4" reason="Adjacent"/>
@@ -38,4 +59,8 @@
     <disable_collisions link1="link5" link2="link6" reason="Adjacent"/>
     <disable_collisions link1="link5" link2="link7" reason="Default"/>
     <disable_collisions link1="link6" link2="link7" reason="Adjacent"/>
+    <disable_collisions link1="tabelLink1" link2="tableBase" reason="Adjacent"/>
+    <disable_collisions link1="tabelLink1" link2="tableEeffortLink" reason="Never"/>
+    <disable_collisions link1="tabelLink1" link2="tableLink2" reason="Adjacent"/>
+    <disable_collisions link1="tableEeffortLink" link2="tableLink2" reason="Adjacent"/>
 </robot>

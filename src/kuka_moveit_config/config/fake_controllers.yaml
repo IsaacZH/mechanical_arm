@@ -12,6 +12,17 @@ controller_list:
     type: $(arg fake_execution_type)
     joints:
       []
+  - name: fake_table_arm_controller
+    type: $(arg fake_execution_type)
+    joints:
+      - tableJoint1
+      - tableJoint2
+  - name: fake_table_hand_controller
+    type: $(arg fake_execution_type)
+    joints:
+      []
 initial:  # Define initial robot poses per group
   - group: kuka_arm
+    pose: home
+  - group: table_arm
     pose: home
