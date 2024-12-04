@@ -14,8 +14,8 @@ struct Point
 };
 
 void hilbert(int n, std::vector<Point> &points, double x0, double y0);
-void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterface &move_group_interface,
-                                     const moveit::core::JointModelGroup *joint_model_group,
+void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterface &arm_group_interface,
+                                     const moveit::core::JointModelGroup *arm_joint_model_group,
                                      moveit_visual_tools::MoveItVisualTools &visual_tools,
                                      const std::vector<geometry_msgs::Pose> &target_poses,
                                      const geometry_msgs::Point &sphere_center,
@@ -23,21 +23,27 @@ void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterf
                                      int max_attempts,
                                      int per_execute_cnt);
 std::vector<Point> generateCycloid(const std::vector<Point> &hilbertPoints, double radius, int frequency);
-void missionOne(moveit::planning_interface::MoveGroupInterface &move_group_interface,
-                const moveit::core::JointModelGroup *joint_model_group,
+void missionOne(moveit::planning_interface::MoveGroupInterface &arm_group_interface,
+                const moveit::core::JointModelGroup *arm_joint_model_group,
                 moveit_visual_tools::MoveItVisualTools &visual_tools,
                 const Eigen::Isometry3d &text_pose);
-void missionTwo(moveit::planning_interface::MoveGroupInterface &move_group_interface,
-                const moveit::core::JointModelGroup *joint_model_group,
+void missionTwo(moveit::planning_interface::MoveGroupInterface &arm_group_interface,
+                const moveit::core::JointModelGroup *arm_joint_model_group,
                 moveit_visual_tools::MoveItVisualTools &visual_tools,
                 const Eigen::Isometry3d &text_pose);
-void additonalTaskOne(moveit::planning_interface::MoveGroupInterface &move_group_interface,
-                      const moveit::core::JointModelGroup *joint_model_group,
+void additonalTaskOne(moveit::planning_interface::MoveGroupInterface &arm_group_interface,
+                      const moveit::core::JointModelGroup *arm_joint_model_group,
                       moveit_visual_tools::MoveItVisualTools &visual_tools,
                       const Eigen::Isometry3d &text_pose);
-void additonalTaskTwo(moveit::planning_interface::MoveGroupInterface &move_group_interface,
-                      const moveit::core::JointModelGroup *joint_model_group,
+void additonalTaskTwo(moveit::planning_interface::MoveGroupInterface &arm_group_interface,
+                      const moveit::core::JointModelGroup *arm_joint_model_group,
                       moveit_visual_tools::MoveItVisualTools &visual_tools,
+                      const Eigen::Isometry3d &text_pose);
+void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_group_interface, \
+                      const moveit::core::JointModelGroup *arm_joint_model_group, \
+                      moveit::planning_interface::MoveGroupInterface &table_group_interface, \
+                      const moveit::core::JointModelGroup *table_joint_model_group, \
+                      moveit_visual_tools::MoveItVisualTools &visual_tools, \
                       const Eigen::Isometry3d &text_pose);
 
 int main(int argc, char **argv)
@@ -46,16 +52,19 @@ int main(int argc, char **argv)
     /********************************************************************************* */
     /*************************             初始化           ************************** */
     /********************************************************************************* */
-    ros::init(argc, argv, "move_group_interface_tutorial");
+    ros::init(argc, argv, "move_group_interface");
     ros::NodeHandle node_handle;
     ros::AsyncSpinner spinner(1);
     spinner.start();
 
-    static const std::string PLANNING_GROUP = "kuka_arm";
-    moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
-    moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
+    static const std::string ARM_PLANNING_GROUP = "kuka_arm";
+    moveit::planning_interface::MoveGroupInterface arm_group_interface(ARM_PLANNING_GROUP);
+    const moveit::core::JointModelGroup *arm_joint_model_group = arm_group_interface.getCurrentState()->getJointModelGroup(ARM_PLANNING_GROUP);
 
-    const moveit::core::JointModelGroup *joint_model_group = move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
+    static const std::string TABLE_PLANNING_GROUP = "table_arm";
+    moveit::planning_interface::MoveGroupInterface table_group_interface(TABLE_PLANNING_GROUP);
+    const moveit::core::JointModelGroup *table_joint_model_group = table_group_interface.getCurrentState()->getJointModelGroup(TABLE_PLANNING_GROUP);
+
 
     namespace rvt = rviz_visual_tools;
     moveit_visual_tools::MoveItVisualTools visual_tools("base_link");
@@ -68,19 +77,19 @@ int main(int argc, char **argv)
     text_pose.translation().x() = -1.0;
     visual_tools.publishText(text_pose, "MoveGroupInterface Demo", rvt::WHITE, rvt::XLARGE);
     visual_tools.trigger();
-    visual_tools.prompt("Press 'next' to move to Point A");
+    // visual_tools.prompt("Press 'next' to move to Point A");
 
     /********************************************************************************* */
     /*************************             任务一           ************************** */
     /********************************************************************************* */
-    // missionOne(move_group_interface, joint_model_group, visual_tools, text_pose);
+    // missionOne(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
     // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
     // visual_tools.deleteAllMarkers();
     // visual_tools.trigger();
     /********************************************************************************* */
     /*************************             任务二           ************************** */
     /********************************************************************************* */
-    // missionTwo(move_group_interface, joint_model_group, visual_tools, text_pose);
+    // missionTwo(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
     // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
     // visual_tools.deleteAllMarkers();
     // visual_tools.trigger();
@@ -88,14 +97,21 @@ int main(int argc, char **argv)
     /********************************************************************************* */
     /***********************             附加任务一           ************************* */
     /********************************************************************************* */
-    additonalTaskOne(move_group_interface, joint_model_group, visual_tools, text_pose);
-    visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
-    visual_tools.deleteAllMarkers();
-    visual_tools.trigger();
+    // additonalTaskOne(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
+    // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
+    // visual_tools.deleteAllMarkers();
+    // visual_tools.trigger();
     /********************************************************************************* */
     /***********************             附加任务二           ************************* */
     /********************************************************************************* */
-    // additonalTaskTwo(move_group_interface, joint_model_group, visual_tools, text_pose);
+    // additonalTaskTwo(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
+    // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
+    // visual_tools.deleteAllMarkers();
+    // visual_tools.trigger();
+    /********************************************************************************* */
+    /***********************             附加任务三           ************************* */
+    /********************************************************************************* */
+    additonalTaskThree(arm_group_interface, arm_joint_model_group, table_group_interface, table_joint_model_group, visual_tools, text_pose);
     // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
     // visual_tools.deleteAllMarkers();
     // visual_tools.trigger();
@@ -137,8 +153,8 @@ void hilbert(int n, std::vector<Point> &points, double x0, double y0)
     }
 }
 
-void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterface &move_group_interface,
-                                     const moveit::core::JointModelGroup *joint_model_group,
+void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterface &arm_group_interface,
+                                     const moveit::core::JointModelGroup *arm_joint_model_group,
                                      moveit_visual_tools::MoveItVisualTools &visual_tools,
                                      const std::vector<geometry_msgs::Pose> &target_poses,
                                      const geometry_msgs::Point &sphere_center,
@@ -201,7 +217,7 @@ void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterf
         {
             while (fraction < 0.99 && attempts < max_attempts)
             {
-                fraction = move_group_interface.computeCartesianPath(temp_points, eef_step, trajectory);
+                fraction = arm_group_interface.computeCartesianPath(temp_points, eef_step, trajectory);
                 attempts++;
             }
 
@@ -210,9 +226,9 @@ void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterf
                 ROS_INFO("Successfully computed Cartesian path (%.2f%% achieved) after %d attempts", fraction * 100.0, attempts);
                 moveit::planning_interface::MoveGroupInterface::Plan cartesian_plan;
                 cartesian_plan.trajectory_ = trajectory;
-                visual_tools.publishTrajectoryLine(trajectory, joint_model_group);
+                visual_tools.publishTrajectoryLine(trajectory, arm_joint_model_group);
                 visual_tools.trigger();
-                move_group_interface.execute(cartesian_plan);
+                arm_group_interface.execute(cartesian_plan);
             }
             else
             {
@@ -258,32 +274,32 @@ std::vector<Point> generateCycloid(const std::vector<Point> &hilbertPoints, doub
     return cycloidPoints;
 }
 
-void missionOne(moveit::planning_interface::MoveGroupInterface &move_group_interface,
-                const moveit::core::JointModelGroup *joint_model_group,
+void missionOne(moveit::planning_interface::MoveGroupInterface &arm_group_interface,
+                const moveit::core::JointModelGroup *arm_joint_model_group,
                 moveit_visual_tools::MoveItVisualTools &visual_tools,
                 const Eigen::Isometry3d &text_pose)
 {
     namespace rvt = rviz_visual_tools;
     std::vector<double> joint_group_positions;
-    moveit::core::RobotStatePtr current_state = move_group_interface.getCurrentState();
-    current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
+    moveit::core::RobotStatePtr current_state = arm_group_interface.getCurrentState();
+    current_state->copyJointGroupPositions(arm_joint_model_group, joint_group_positions);
 
     // 设置A点的关节位置
     joint_group_positions[0] = -M_PI / 2;
     joint_group_positions[1] = M_PI / 6;
 
-    move_group_interface.setJointValueTarget(joint_group_positions);
+    arm_group_interface.setJointValueTarget(joint_group_positions);
 
     // 规划并移动到A点
     moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-    bool success = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    bool success = (arm_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (success)
     {
         // 可视化轨迹
         visual_tools.publishText(text_pose, "Moving to Point A", rvt::WHITE, rvt::XLARGE);
-        visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+        visual_tools.publishTrajectoryLine(my_plan.trajectory_, arm_joint_model_group);
         visual_tools.trigger();
-        move_group_interface.move();
+        arm_group_interface.move();
     }
     else
     {
@@ -293,17 +309,17 @@ void missionOne(moveit::planning_interface::MoveGroupInterface &move_group_inter
     visual_tools.prompt("Press 'next' to move to Home");
 
     // 设置home姿态为目标位置
-    move_group_interface.setNamedTarget("home");
+    arm_group_interface.setNamedTarget("home");
 
     // 规划并移动到home姿态
-    success = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    success = (arm_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (success)
     {
         // 可视化轨迹
         visual_tools.publishText(text_pose, "Moving to Home Pose", rvt::WHITE, rvt::XLARGE);
-        visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+        visual_tools.publishTrajectoryLine(my_plan.trajectory_, arm_joint_model_group);
         visual_tools.trigger();
-        move_group_interface.move();
+        arm_group_interface.move();
     }
     else
     {
@@ -311,8 +327,8 @@ void missionOne(moveit::planning_interface::MoveGroupInterface &move_group_inter
     }
 }
 
-void missionTwo(moveit::planning_interface::MoveGroupInterface &move_group_interface,
-                const moveit::core::JointModelGroup *joint_model_group,
+void missionTwo(moveit::planning_interface::MoveGroupInterface &arm_group_interface,
+                const moveit::core::JointModelGroup *arm_joint_model_group,
                 moveit_visual_tools::MoveItVisualTools &visual_tools,
                 const Eigen::Isometry3d &text_pose)
 {
@@ -327,7 +343,7 @@ void missionTwo(moveit::planning_interface::MoveGroupInterface &move_group_inter
     double h = 1.2;
     // // 设置笛卡尔路径的目标位姿
     std::vector<geometry_msgs::Pose> waypoints;
-    geometry_msgs::Pose target_pose = move_group_interface.getCurrentPose().pose;
+    geometry_msgs::Pose target_pose = arm_group_interface.getCurrentPose().pose;
 
     for (const auto &point : hilbert_raw_points)
     {
@@ -340,19 +356,19 @@ void missionTwo(moveit::planning_interface::MoveGroupInterface &move_group_inter
     // 规划笛卡尔路径
     moveit_msgs::RobotTrajectory trajectory;
     const double eef_step = 0.01;
-    double fraction = move_group_interface.computeCartesianPath(waypoints, eef_step, trajectory);
+    double fraction = arm_group_interface.computeCartesianPath(waypoints, eef_step, trajectory);
 
     ROS_INFO("Successfully computed Cartesian path (%.2f%% achieved)", fraction * 100.0);
     visual_tools.publishText(text_pose, "Executing Cartesian Path", rvt::WHITE, rvt::XLARGE);
-    visual_tools.publishTrajectoryLine(trajectory, joint_model_group); // 可视化轨迹
+    visual_tools.publishTrajectoryLine(trajectory, arm_joint_model_group); // 可视化轨迹
     moveit::planning_interface::MoveGroupInterface::Plan cartesian_plan;
     cartesian_plan.trajectory_ = trajectory;
     visual_tools.trigger();
-    move_group_interface.execute(cartesian_plan);
+    arm_group_interface.execute(cartesian_plan);
 }
 
-void additonalTaskOne(moveit::planning_interface::MoveGroupInterface &move_group_interface,
-                      const moveit::core::JointModelGroup *joint_model_group,
+void additonalTaskOne(moveit::planning_interface::MoveGroupInterface &arm_group_interface,
+                      const moveit::core::JointModelGroup *arm_joint_model_group,
                       moveit_visual_tools::MoveItVisualTools &visual_tools,
                       const Eigen::Isometry3d &text_pose)
 {
@@ -376,17 +392,17 @@ void additonalTaskOne(moveit::planning_interface::MoveGroupInterface &move_group
     for (const auto &point : hilbert_raw_points)
     {
         double theta = point.x * M_PI; // 将x映射到[0, π]
-        double phi = point.y * (5.0 / 6.0) * M_PI;   // 将y映射到[0, π]
+        double phi = point.y * 2 * (5.0 / 9.0) * M_PI / 2;   // 将y映射到[0, π]
         temp_pose.position.x = sphere_center.x + radius * sin(phi) * cos(theta);
         temp_pose.position.y = sphere_center.y + radius * sin(phi) * sin(theta);
         temp_pose.position.z = sphere_center.z + radius * cos(phi);
         waypoints.push_back(temp_pose);
     }
-    Execute_CartesianPath_AllAtOnce(move_group_interface, joint_model_group, visual_tools, waypoints, sphere_center, 0.05, 100, 5000);
+    Execute_CartesianPath_AllAtOnce(arm_group_interface, arm_joint_model_group, visual_tools, waypoints, sphere_center, 0.05, 100, 5000);
 }
 
-void additonalTaskTwo(moveit::planning_interface::MoveGroupInterface &move_group_interface,
-                      const moveit::core::JointModelGroup *joint_model_group,
+void additonalTaskTwo(moveit::planning_interface::MoveGroupInterface &arm_group_interface,
+                      const moveit::core::JointModelGroup *arm_joint_model_group,
                       moveit_visual_tools::MoveItVisualTools &visual_tools,
                       const Eigen::Isometry3d &text_pose)
 {
@@ -419,5 +435,55 @@ void additonalTaskTwo(moveit::planning_interface::MoveGroupInterface &move_group
         temp_pose.position.z = sphere_center.z + radius * cos(phi);
         waypoints.push_back(temp_pose);
     }
-    Execute_CartesianPath_AllAtOnce(move_group_interface, joint_model_group, visual_tools, waypoints, sphere_center, 0.05, 1000, 5000);
+    Execute_CartesianPath_AllAtOnce(arm_group_interface, arm_joint_model_group, visual_tools, waypoints, sphere_center, 0.05, 1000, 5000);
+}
+
+void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_group_interface, \
+                      const moveit::core::JointModelGroup *arm_joint_model_group, \
+                      moveit::planning_interface::MoveGroupInterface &table_group_interface, \
+                      const moveit::core::JointModelGroup *table_joint_model_group, \
+                      moveit_visual_tools::MoveItVisualTools &visual_tools, \
+                      const Eigen::Isometry3d &text_pose)
+{
+    namespace rvt = rviz_visual_tools;
+
+    // 生成希尔伯特曲线的原始点
+    int order = 2; // 希尔伯特曲线的阶数
+    std::vector<Point> hilbert_raw_points;
+    hilbert(order, hilbert_raw_points, 0, 0);
+
+    // 设置转台目标关节角度
+    for (const auto &point : hilbert_raw_points)
+    {
+        double theta = point.x * M_PI; // 将x映射到[0, π] 经度
+        double phi = point.y * 2 * (5.0 / 9.0) * M_PI / 2;   // 将y映射到[0, π/2] 纬度
+        std::vector<double> table_joint_group_positions;
+        moveit::core::RobotStatePtr current_state = table_group_interface.getCurrentState();
+        current_state->copyJointGroupPositions(table_joint_model_group, table_joint_group_positions);
+
+        // 关节角度
+        table_joint_group_positions[0] = phi;
+        table_joint_group_positions[1] = theta;
+
+        table_group_interface.setJointValueTarget(table_joint_group_positions);
+
+        // 规划并移动
+        moveit::planning_interface::MoveGroupInterface::Plan table_plan;
+        bool success = (table_group_interface.plan(table_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+        if (success)
+        {
+            // 可视化轨迹
+            visual_tools.publishText(text_pose, "Moving to Point A", rvt::WHITE, rvt::XLARGE);
+            visual_tools.publishTrajectoryLine(table_plan.trajectory_, table_joint_model_group);
+            visual_tools.trigger();
+            table_group_interface.move();
+        }
+        else
+        {
+            ROS_ERROR("Failed to plan");
+        }
+
+    }
+
+    
 }
