@@ -137,7 +137,9 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/arm_control_node.cpp)
 add_executable(move_group_interface src/move_group_interface.cpp)
+add_executable(display_trajectory_node src/display_trajectory_node.cpp)
 target_link_libraries(move_group_interface ${catkin_LIBRARIES})
+target_link_libraries(display_trajectory_node ${catkin_LIBRARIES})
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use

@@ -463,6 +463,7 @@ void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_grou
     std::vector<Point> hilbert_raw_points;
     hilbert(order, hilbert_raw_points, 0, 0);
 
+    int first_angel_flag = 0; // 第一个角度标志位，只改一次角度
     for (const auto &point : hilbert_raw_points)
     {
         // 转台角度计算
@@ -477,29 +478,35 @@ void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_grou
         double z = -abs(cos(phi) * d) + r + offset;
 
         // 设置臂末端笛卡尔路径目标位置
-        geometry_msgs::Pose target_pose = combine_group_interface.getCurrentPose(arm_group_interface.getEndEffectorLink()).pose;
+        geometry_msgs::Pose target_pose = arm_group_interface.getCurrentPose().pose;
         target_pose.position.x = x;
         target_pose.position.y = 0;
         target_pose.position.z = z;
-        // 设置臂末端姿态，使其垂直于地面
-        target_pose.orientation.x = -0.707107;
-        target_pose.orientation.y = 0;
-        target_pose.orientation.z = 0;
-        target_pose.orientation.w = 0.707107;
 
-        combine_group_interface.setPoseTarget(target_pose, arm_group_interface.getEndEffectorLink());
+        if (first_angel_flag == 0)
+        {
+            // 设置臂末端姿态，使其垂直于地面
+            target_pose.orientation.x = -0.707107;
+            target_pose.orientation.y = 0;
+            target_pose.orientation.z = 0;
+            target_pose.orientation.w = 0.707107;
+            first_angel_flag = 1;
+        }
+        
+
+        arm_group_interface.setPoseTarget(target_pose);
 
         // 规划并执行转台和臂末端的路径
         moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-        bool success = (combine_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+        bool success = (arm_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
         
         // 获取当前转台关节角度
         std::vector<double> combine_joint_group_positions;
         moveit::core::RobotStatePtr current_state = combine_group_interface.getCurrentState();
         current_state->copyJointGroupPositions(combine_joint_model_group, combine_joint_group_positions);
         // 设置转台目标关节角度
-        double current_phi = combine_joint_group_positions[6];
-        double current_theta = combine_joint_group_positions[7];
+        combine_joint_group_positions[6] = phi;
+        combine_joint_group_positions[7] = theta;
         
         if (success)
         {
@@ -507,18 +514,16 @@ void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_grou
             moveit_msgs::RobotTrajectory& trajectory = my_plan.trajectory_;
             trajectory_msgs::JointTrajectory& joint_trajectory = trajectory.joint_trajectory;
             std::vector<trajectory_msgs::JointTrajectoryPoint>& points = joint_trajectory.points;
-        
-            // 修改关节角度
-            for (std::size_t i = 0; i < points.size(); ++i)
+            // 读取最后关节角度
+            for (int i = 0; i < 6; i++)
             {
-                double t = static_cast<double>(i) / (points.size() - 1); // 计算插值比例
-                points[i].positions[6] = current_phi + t * (phi - current_phi); // 插值计算第6个关节的角度
-                points[i].positions[7] = current_theta + t * (theta - current_theta); // 插值计算第7个关节的角度
+                combine_joint_group_positions[i] = points.back().positions[i];
             }
-            
-        
-            // 执行修改后的路径
-            combine_group_interface.execute(my_plan);
+            combine_group_interface.setPlannerId("RRTConnectkConfigDefault");
+            combine_group_interface.setJointValueTarget(combine_joint_group_positions);
+            moveit::planning_interface::MoveGroupInterface::Plan combine_plan;
+            combine_group_interface.plan(combine_plan);
+            combine_group_interface.execute(combine_plan);
         }
     }
 }

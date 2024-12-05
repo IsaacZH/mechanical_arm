@@ -99,7 +99,8 @@
         "vec4s": "cpp",
         "vec4ui": "cpp",
         "vec4us": "cpp",
-        "viewport": "cpp"
+        "viewport": "cpp",
+        "image": "cpp"
     },
     "cmake.ignoreCMakeListsMissing": true
 }
