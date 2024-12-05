@@ -43,12 +43,14 @@ void additonalTaskTwo(moveit::planning_interface::MoveGroupInterface &arm_group_
                       const moveit::core::JointModelGroup *arm_joint_model_group,
                       moveit_visual_tools::MoveItVisualTools &visual_tools,
                       const Eigen::Isometry3d &text_pose);
-void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_group_interface, \
-                      const moveit::core::JointModelGroup *arm_joint_model_group, \
-                      moveit::planning_interface::MoveGroupInterface &table_group_interface, \
-                      const moveit::core::JointModelGroup *table_joint_model_group, \
-                      moveit_visual_tools::MoveItVisualTools &visual_tools, \
-                      const Eigen::Isometry3d &text_pose);
+void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_group_interface,
+                        const moveit::core::JointModelGroup *arm_joint_model_group,
+                        moveit::planning_interface::MoveGroupInterface &table_group_interface,
+                        const moveit::core::JointModelGroup *table_joint_model_group,
+                        moveit::planning_interface::MoveGroupInterface &combine_group_interface,
+                        const moveit::core::JointModelGroup *combine_joint_model_group,
+                        moveit_visual_tools::MoveItVisualTools &visual_tools,
+                        const Eigen::Isometry3d &text_pose);
 
 int main(int argc, char **argv)
 {
@@ -69,6 +71,9 @@ int main(int argc, char **argv)
     moveit::planning_interface::MoveGroupInterface table_group_interface(TABLE_PLANNING_GROUP);
     const moveit::core::JointModelGroup *table_joint_model_group = table_group_interface.getCurrentState()->getJointModelGroup(TABLE_PLANNING_GROUP);
 
+    static const std::string COMBINE_PLANNING_GROUP = "combine_group";
+    moveit::planning_interface::MoveGroupInterface combine_group_interface(COMBINE_PLANNING_GROUP);
+    const moveit::core::JointModelGroup *combine_joint_model_group = combine_group_interface.getCurrentState()->getJointModelGroup(COMBINE_PLANNING_GROUP);
 
     namespace rvt = rviz_visual_tools;
     moveit_visual_tools::MoveItVisualTools visual_tools("base_link");
@@ -115,7 +120,7 @@ int main(int argc, char **argv)
     /********************************************************************************* */
     /***********************             附加任务三           ************************* */
     /********************************************************************************* */
-    additonalTaskThree(arm_group_interface, arm_joint_model_group, table_group_interface, table_joint_model_group, visual_tools, text_pose);
+    additonalTaskThree(arm_group_interface, arm_joint_model_group, table_group_interface, table_joint_model_group, combine_group_interface, combine_joint_model_group, visual_tools, text_pose);
     // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
     // visual_tools.deleteAllMarkers();
     // visual_tools.trigger();
@@ -395,8 +400,8 @@ void additonalTaskOne(moveit::planning_interface::MoveGroupInterface &arm_group_
 
     for (const auto &point : hilbert_raw_points)
     {
-        double theta = point.x * M_PI; // 将x映射到[0, π]
-        double phi = point.y * 2 * (5.0 / 9.0) * M_PI / 2;   // 将y映射到[0, π]
+        double theta = point.x * M_PI;                     // 将x映射到[0, π]
+        double phi = point.y * 2 * (5.0 / 9.0) * M_PI / 2; // 将y映射到[0, π]
         temp_pose.position.x = sphere_center.x + radius * sin(phi) * cos(theta);
         temp_pose.position.y = sphere_center.y + radius * sin(phi) * sin(theta);
         temp_pose.position.z = sphere_center.z + radius * cos(phi);
@@ -432,8 +437,8 @@ void additonalTaskTwo(moveit::planning_interface::MoveGroupInterface &arm_group_
 
     for (const auto &point : cycloid_points)
     {
-        double theta = point.x * M_PI; // 将x映射到[0, π]
-        double phi = point.y * (5.0 / 6.0) * M_PI;   // 将y映射到[0, π]
+        double theta = point.x * M_PI;             // 将x映射到[0, π]
+        double phi = point.y * (5.0 / 6.0) * M_PI; // 将y映射到[0, π]
         temp_pose.position.x = sphere_center.x + radius * sin(phi) * cos(theta);
         temp_pose.position.y = sphere_center.y + radius * sin(phi) * sin(theta);
         temp_pose.position.z = sphere_center.z + radius * cos(phi);
@@ -442,12 +447,14 @@ void additonalTaskTwo(moveit::planning_interface::MoveGroupInterface &arm_group_
     Execute_CartesianPath_AllAtOnce(arm_group_interface, arm_joint_model_group, visual_tools, waypoints, sphere_center, 0.05, 1000, 5000);
 }
 
-void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_group_interface, \
-                      const moveit::core::JointModelGroup *arm_joint_model_group, \
-                      moveit::planning_interface::MoveGroupInterface &table_group_interface, \
-                      const moveit::core::JointModelGroup *table_joint_model_group, \
-                      moveit_visual_tools::MoveItVisualTools &visual_tools, \
-                      const Eigen::Isometry3d &text_pose)
+void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_group_interface,
+                        const moveit::core::JointModelGroup *arm_joint_model_group,
+                        moveit::planning_interface::MoveGroupInterface &table_group_interface,
+                        const moveit::core::JointModelGroup *table_joint_model_group,
+                        moveit::planning_interface::MoveGroupInterface &combine_group_interface,
+                        const moveit::core::JointModelGroup *combine_joint_model_group,
+                        moveit_visual_tools::MoveItVisualTools &visual_tools,
+                        const Eigen::Isometry3d &text_pose)
 {
     namespace rvt = rviz_visual_tools;
 
@@ -456,32 +463,21 @@ void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_grou
     std::vector<Point> hilbert_raw_points;
     hilbert(order, hilbert_raw_points, 0, 0);
 
-    // 
     for (const auto &point : hilbert_raw_points)
     {
-        //转台角度计算
-        double theta = point.x * M_PI; // 将x映射到[0, π] 经度
-        double phi = point.y * 2 * (5.0 / 9.0) * M_PI / 2;   // 将y映射到[0, π/2] 纬度
-        //臂末端位置计算
-        double D = 1.0; // 转台中心到原点的距离
-        double d = 0.029; // 旋转中心到球心的距离
-        double r = 0.25; // 球的半径
+        // 转台角度计算
+        double theta = point.x * M_PI;                     // 将x映射到[0, π] 经度
+        double phi = point.y * 2 * (5.0 / 9.0) * M_PI / 2; // 将y映射到[0, π/2] 纬度
+        // 臂末端位置计算
+        double D = 1.0;      // 转台中心到原点的距离
+        double d = 0.029;    // 旋转中心到球心的距离
+        double r = 0.25;     // 球的半径
         double offset = 0.4; // 臂末端执行器offset
-        double x = sign(phi)*sin(phi)*d+D;
-        double z = -abs(cos(phi)*d)+r+offset;
-
-        // 获取当前转台关节角度
-        std::vector<double> table_joint_group_positions;
-        moveit::core::RobotStatePtr current_state = table_group_interface.getCurrentState();
-        current_state->copyJointGroupPositions(table_joint_model_group, table_joint_group_positions);
-
-        // 设置转台目标关节角度
-        table_joint_group_positions[0] = phi;
-        table_joint_group_positions[1] = theta;
-        table_group_interface.setJointValueTarget(table_joint_group_positions);
+        double x = sign(phi) * sin(phi) * d + D;
+        double z = -abs(cos(phi) * d) + r + offset;
 
         // 设置臂末端笛卡尔路径目标位置
-        geometry_msgs::Pose target_pose = arm_group_interface.getCurrentPose().pose;
+        geometry_msgs::Pose target_pose = combine_group_interface.getCurrentPose(arm_group_interface.getEndEffectorLink()).pose;
         target_pose.position.x = x;
         target_pose.position.y = 0;
         target_pose.position.z = z;
@@ -491,38 +487,38 @@ void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_grou
         target_pose.orientation.z = 0;
         target_pose.orientation.w = 0.707107;
 
-        std::vector<geometry_msgs::Pose> arm_waypoints;
-        arm_waypoints.push_back(target_pose);
+        combine_group_interface.setPoseTarget(target_pose, arm_group_interface.getEndEffectorLink());
 
-        // 规划笛卡尔路径
-        moveit_msgs::RobotTrajectory trajectory;
-        const double eef_step = 0.01; // 终端执行器的步长
-        double fraction = arm_group_interface.computeCartesianPath(arm_waypoints, eef_step, trajectory);
-        moveit::planning_interface::MoveGroupInterface::Plan cartesian_plan;
-        cartesian_plan.trajectory_ = trajectory;
-
-        if (fraction > 0.99) // 如果路径规划成功率高于99%
-        {
-            ROS_INFO("Successfully computed Cartesian path (%.2f%% achieved)", fraction * 100.0);
-        }
-        else
-        {
-            ROS_WARN("Failed to compute Cartesian path (%.2f%% achieved)", fraction * 100.0);
-        }
-    
-        // 规划并移动
-        moveit::planning_interface::MoveGroupInterface::Plan table_plan;
-        bool success = (table_group_interface.plan(table_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+        // 规划并执行转台和臂末端的路径
+        moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+        bool success = (combine_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+        
+        // 获取当前转台关节角度
+        std::vector<double> combine_joint_group_positions;
+        moveit::core::RobotStatePtr current_state = combine_group_interface.getCurrentState();
+        current_state->copyJointGroupPositions(combine_joint_model_group, combine_joint_group_positions);
+        // 设置转台目标关节角度
+        double current_phi = combine_joint_group_positions[6];
+        double current_theta = combine_joint_group_positions[7];
+        
         if (success)
         {
-            arm_group_interface.execute(cartesian_plan);
-            table_group_interface.execute(table_plan);
+            // 获取轨迹中的所有关节角度
+            moveit_msgs::RobotTrajectory& trajectory = my_plan.trajectory_;
+            trajectory_msgs::JointTrajectory& joint_trajectory = trajectory.joint_trajectory;
+            std::vector<trajectory_msgs::JointTrajectoryPoint>& points = joint_trajectory.points;
+        
+            // 修改关节角度
+            for (std::size_t i = 0; i < points.size(); ++i)
+            {
+                double t = static_cast<double>(i) / (points.size() - 1); // 计算插值比例
+                points[i].positions[6] = current_phi + t * (phi - current_phi); // 插值计算第6个关节的角度
+                points[i].positions[7] = current_theta + t * (theta - current_theta); // 插值计算第7个关节的角度
+            }
+            
+        
+            // 执行修改后的路径
+            combine_group_interface.execute(my_plan);
         }
-        else
-        {
-            ROS_ERROR("Failed to plan");
-        }
-
     }
-
 }
