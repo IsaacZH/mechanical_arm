@@ -12,6 +12,10 @@ struct Point
 {
     double x, y;
 };
+int sign(double value)
+{
+    return (value > 0) - (value < 0);
+}
 
 void hilbert(int n, std::vector<Point> &points, double x0, double y0);
 void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterface &arm_group_interface,
@@ -452,31 +456,67 @@ void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_grou
     std::vector<Point> hilbert_raw_points;
     hilbert(order, hilbert_raw_points, 0, 0);
 
-    // 设置转台目标关节角度
+    // 
     for (const auto &point : hilbert_raw_points)
     {
+        //转台角度计算
         double theta = point.x * M_PI; // 将x映射到[0, π] 经度
         double phi = point.y * 2 * (5.0 / 9.0) * M_PI / 2;   // 将y映射到[0, π/2] 纬度
+        //臂末端位置计算
+        double D = 1.0; // 转台中心到原点的距离
+        double d = 0.029; // 旋转中心到球心的距离
+        double r = 0.25; // 球的半径
+        double offset = 0.4; // 臂末端执行器offset
+        double x = sign(phi)*sin(phi)*d+D;
+        double z = -abs(cos(phi)*d)+r+offset;
+
+        // 获取当前转台关节角度
         std::vector<double> table_joint_group_positions;
         moveit::core::RobotStatePtr current_state = table_group_interface.getCurrentState();
         current_state->copyJointGroupPositions(table_joint_model_group, table_joint_group_positions);
 
-        // 关节角度
+        // 设置转台目标关节角度
         table_joint_group_positions[0] = phi;
         table_joint_group_positions[1] = theta;
-
         table_group_interface.setJointValueTarget(table_joint_group_positions);
 
+        // 设置臂末端笛卡尔路径目标位置
+        geometry_msgs::Pose target_pose = arm_group_interface.getCurrentPose().pose;
+        target_pose.position.x = x;
+        target_pose.position.y = 0;
+        target_pose.position.z = z;
+        // 设置臂末端姿态，使其垂直于地面
+        target_pose.orientation.x = -0.707107;
+        target_pose.orientation.y = 0;
+        target_pose.orientation.z = 0;
+        target_pose.orientation.w = 0.707107;
+
+        std::vector<geometry_msgs::Pose> arm_waypoints;
+        arm_waypoints.push_back(target_pose);
+
+        // 规划笛卡尔路径
+        moveit_msgs::RobotTrajectory trajectory;
+        const double eef_step = 0.01; // 终端执行器的步长
+        double fraction = arm_group_interface.computeCartesianPath(arm_waypoints, eef_step, trajectory);
+        moveit::planning_interface::MoveGroupInterface::Plan cartesian_plan;
+        cartesian_plan.trajectory_ = trajectory;
+
+        if (fraction > 0.99) // 如果路径规划成功率高于99%
+        {
+            ROS_INFO("Successfully computed Cartesian path (%.2f%% achieved)", fraction * 100.0);
+        }
+        else
+        {
+            ROS_WARN("Failed to compute Cartesian path (%.2f%% achieved)", fraction * 100.0);
+        }
+    
         // 规划并移动
         moveit::planning_interface::MoveGroupInterface::Plan table_plan;
         bool success = (table_group_interface.plan(table_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
         if (success)
         {
-            // 可视化轨迹
-            visual_tools.publishText(text_pose, "Moving to Point A", rvt::WHITE, rvt::XLARGE);
-            visual_tools.publishTrajectoryLine(table_plan.trajectory_, table_joint_model_group);
-            visual_tools.trigger();
-            table_group_interface.move();
+            arm_group_interface.execute(cartesian_plan);
+            table_group_interface.execute(table_plan);
         }
         else
         {
@@ -485,5 +525,4 @@ void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_grou
 
     }
 
-    
 }

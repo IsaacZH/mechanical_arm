@@ -72,7 +72,8 @@
         "variant": "cpp",
         "boundingbox": "cpp",
         "boundingsphere": "cpp",
-        "specialfunctions": "cpp"
+        "specialfunctions": "cpp",
+        "math": "cpp"
     },
     "cmake.ignoreCMakeListsMissing": true
 }
