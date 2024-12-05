@@ -5,6 +5,7 @@
 #include <moveit_msgs/AttachedCollisionObject.h>
 #include <moveit_msgs/CollisionObject.h>
 #include <moveit_visual_tools/moveit_visual_tools.h>
+#include <thread>
 
 const double tau = 2 * M_PI;
 
@@ -49,7 +50,6 @@ void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_grou
                         const moveit::core::JointModelGroup *table_joint_model_group,
                         moveit::planning_interface::MoveGroupInterface &combine_group_interface,
                         const moveit::core::JointModelGroup *combine_joint_model_group,
-                        moveit_visual_tools::MoveItVisualTools &visual_tools,
                         const Eigen::Isometry3d &text_pose);
 
 int main(int argc, char **argv)
@@ -88,31 +88,31 @@ int main(int argc, char **argv)
     visual_tools.trigger();
     // visual_tools.prompt("Press 'next' to move to Point A");
 
-    /********************************************************************************* */
-    /*************************             任务一           ************************** */
-    /********************************************************************************* */
+    // /********************************************************************************* */
+    // /*************************             任务一           ************************** */
+    // /********************************************************************************* */
     // missionOne(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
     // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
     // visual_tools.deleteAllMarkers();
     // visual_tools.trigger();
-    /********************************************************************************* */
-    /*************************             任务二           ************************** */
-    /********************************************************************************* */
+    // /********************************************************************************* */
+    // /*************************             任务二           ************************** */
+    // /********************************************************************************* */
     // missionTwo(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
     // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
     // visual_tools.deleteAllMarkers();
     // visual_tools.trigger();
 
-    /********************************************************************************* */
-    /***********************             附加任务一           ************************* */
-    /********************************************************************************* */
+    // /********************************************************************************* */
+    // /***********************             附加任务一           ************************* */
+    // /********************************************************************************* */
     // additonalTaskOne(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
     // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
     // visual_tools.deleteAllMarkers();
     // visual_tools.trigger();
-    /********************************************************************************* */
-    /***********************             附加任务二           ************************* */
-    /********************************************************************************* */
+    // /********************************************************************************* */
+    // /***********************             附加任务二           ************************* */
+    // /********************************************************************************* */
     // additonalTaskTwo(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
     // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
     // visual_tools.deleteAllMarkers();
@@ -120,10 +120,10 @@ int main(int argc, char **argv)
     /********************************************************************************* */
     /***********************             附加任务三           ************************* */
     /********************************************************************************* */
-    additonalTaskThree(arm_group_interface, arm_joint_model_group, table_group_interface, table_joint_model_group, combine_group_interface, combine_joint_model_group, visual_tools, text_pose);
-    // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
-    // visual_tools.deleteAllMarkers();
-    // visual_tools.trigger();
+    additonalTaskThree(arm_group_interface, arm_joint_model_group, table_group_interface, table_joint_model_group, combine_group_interface, combine_joint_model_group, text_pose);
+    visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
+    visual_tools.deleteAllMarkers();
+    visual_tools.trigger();
 
     ros::shutdown();
     return 0;
@@ -342,6 +342,25 @@ void missionTwo(moveit::planning_interface::MoveGroupInterface &arm_group_interf
                 const Eigen::Isometry3d &text_pose)
 {
     namespace rvt = rviz_visual_tools;
+    std::vector<double> joint_group_positions;
+    moveit::core::RobotStatePtr current_state = arm_group_interface.getCurrentState();
+    current_state->copyJointGroupPositions(arm_joint_model_group, joint_group_positions);
+
+    // 设置A点的关节位置
+    joint_group_positions[0] = M_PI;
+
+    arm_group_interface.setJointValueTarget(joint_group_positions);
+
+    // 规划并移动到点
+    moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+    bool success = (arm_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    if (success)
+    {
+        // 可视化轨迹
+        visual_tools.publishTrajectoryLine(my_plan.trajectory_, arm_joint_model_group);
+        visual_tools.trigger();
+        arm_group_interface.move();
+    }
 
     int order = 4; // 希尔伯特曲线的阶数
     std::vector<Point> hilbert_raw_points;
@@ -356,7 +375,7 @@ void missionTwo(moveit::planning_interface::MoveGroupInterface &arm_group_interf
 
     for (const auto &point : hilbert_raw_points)
     {
-        target_pose.position.x = 0.8; // 固定高度，确保末端垂直于运动平面
+        target_pose.position.x = - 1; // 固定高度，确保末端垂直于运动平面
         target_pose.position.y = (point.x) * w;
         target_pose.position.z = (point.y + 0.5) * h + 0.1;
         waypoints.push_back(target_pose);
@@ -401,7 +420,7 @@ void additonalTaskOne(moveit::planning_interface::MoveGroupInterface &arm_group_
     for (const auto &point : hilbert_raw_points)
     {
         double theta = point.x * M_PI;                     // 将x映射到[0, π]
-        double phi = point.y * 2 * (5.0 / 9.0) * M_PI / 2; // 将y映射到[0, π]
+        double phi = point.y * 2 * (5.0 / 6.0) * M_PI / 2; // 将y映射到[0, π]
         temp_pose.position.x = sphere_center.x + radius * sin(phi) * cos(theta);
         temp_pose.position.y = sphere_center.y + radius * sin(phi) * sin(theta);
         temp_pose.position.z = sphere_center.z + radius * cos(phi);
@@ -453,13 +472,20 @@ void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_grou
                         const moveit::core::JointModelGroup *table_joint_model_group,
                         moveit::planning_interface::MoveGroupInterface &combine_group_interface,
                         const moveit::core::JointModelGroup *combine_joint_model_group,
-                        moveit_visual_tools::MoveItVisualTools &visual_tools,
                         const Eigen::Isometry3d &text_pose)
 {
     namespace rvt = rviz_visual_tools;
+    
+    moveit_visual_tools::MoveItVisualTools visual_tools("tableEeffortLink");
+
+    // 使用线程启动节点
+    std::thread display_trajectory_thread([](){
+        system("rosrun arm_control display_trajectory_node");
+    });
+    display_trajectory_thread.detach(); // 分离线程
 
     // 生成希尔伯特曲线的原始点
-    int order = 2; // 希尔伯特曲线的阶数
+    int order = 3; // 希尔伯特曲线的阶数
     std::vector<Point> hilbert_raw_points;
     hilbert(order, hilbert_raw_points, 0, 0);
 
@@ -523,7 +549,9 @@ void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_grou
             combine_group_interface.setJointValueTarget(combine_joint_group_positions);
             moveit::planning_interface::MoveGroupInterface::Plan combine_plan;
             combine_group_interface.plan(combine_plan);
+            // 执行
             combine_group_interface.execute(combine_plan);
         }
     }
+    system("rosnode kill /display_trajectory_node");
 }

@@ -100,7 +100,10 @@
         "vec4ui": "cpp",
         "vec4us": "cpp",
         "viewport": "cpp",
-        "image": "cpp"
+        "image": "cpp",
+        "regex": "cpp",
+        "slist": "cpp",
+        "valarray": "cpp"
     },
     "cmake.ignoreCMakeListsMissing": true
 }
