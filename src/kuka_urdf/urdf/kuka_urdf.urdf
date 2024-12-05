@@ -13,9 +13,9 @@
     </joint>
     <link name="base_link">
         <inertial>
-            <origin xyz="0.0016907 0.032125 0.19418" rpy="0 0 0" />
-            <mass value="72.846" />
-            <inertia ixx="2.302" ixy="-0.03605" ixz="0.00032487" iyy="1.8691" iyz="0.078265" izz="2.3429" />
+            <origin xyz="0.00169071554591047 0.0321254082322567 0.194181706745783" rpy="0 0 0" />
+            <mass value="72.8456791935468" />
+            <inertia ixx="2.30199373615997" ixy="-0.0360498315195982" ixz="0.000324874783814514" iyy="1.86913360615281" iyz="0.0782647235264402" izz="2.34289554929916" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -23,7 +23,7 @@
                 <mesh filename="package://kuka_urdf/meshes/base_link.STL" />
             </geometry>
             <material name="">
-                <color rgba="0.66667 0.69804 0.76863 1" />
+                <color rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
             </material>
         </visual>
         <collision>
@@ -35,9 +35,9 @@
     </link>
     <link name="link1">
         <inertial>
-            <origin xyz="0.10281 0.16295 -0.04371" rpy="0 0 0" />
-            <mass value="0.060324" />
-            <inertia ixx="0.3612" ixy="-0.15272" ixz="0.0057834" iyy="0.64633" iyz="0.027501" izz="0.64395" />
+            <origin xyz="0.102809070026285 0.162949294249169 -0.0437095970064403" rpy="0 0 0" />
+            <mass value="15.0345564818104" />
+            <inertia ixx="0.361203654554275" ixy="-0.152719426643192" ixz="0.00578336930371961" iyy="0.646325092692869" iyz="0.0275014328808699" izz="0.643948586538561" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -45,7 +45,7 @@
                 <mesh filename="package://kuka_urdf/meshes/link1.STL" />
             </geometry>
             <material name="">
-                <color rgba="0.66667 0.69804 0.76863 1" />
+                <color rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
             </material>
         </visual>
         <collision>
@@ -56,7 +56,7 @@
         </collision>
     </link>
     <joint name="joint1" type="continuous">
-        <origin xyz="0 -0.00999999999999998 0.367" rpy="1.5707963267949 0 -0.0844304651404737" />
+        <origin xyz="0 -0.01 0.367" rpy="1.5708 0 -0.08443" />
         <parent link="base_link" />
         <child link="link1" />
         <axis xyz="0 1 0" />
@@ -64,9 +64,9 @@
     </joint>
     <link name="link2">
         <inertial>
-            <origin xyz="0.0031954 0.2939 0.15509" rpy="0 0 0" />
-            <mass value="0.060324" />
-            <inertia ixx="0.5933" ixy="-0.00066775" ixz="0.00021305" iyy="0.05916" iyz="-0.025976" izz="0.59313" />
+            <origin xyz="0.00319543554968393 0.293900613109197 0.155091057917142" rpy="0 0 0" />
+            <mass value="13.9287847526223" />
+            <inertia ixx="0.59330455813527" ixy="-0.000667748977651198" ixz="0.000213051795030478" iyy="0.0591602762509172" iyz="-0.0259757342567146" izz="0.593132988208399" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -74,7 +74,7 @@
                 <mesh filename="package://kuka_urdf/meshes/link2.STL" />
             </geometry>
             <material name="">
-                <color rgba="0.66667 0.69804 0.76863 1" />
+                <color rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
             </material>
         </visual>
         <collision>
@@ -85,7 +85,7 @@
         </collision>
     </link>
     <joint name="joint2" type="continuous">
-        <origin xyz="0.2751402982579 0.270669215850882 0" rpy="0 0 1.09776733459367" />
+        <origin xyz="0.27514 0.27067 0" rpy="0 0 1.0978" />
         <parent link="link1" />
         <child link="link2" />
         <axis xyz="0 0 1" />
@@ -93,9 +93,9 @@
     </joint>
     <link name="link3">
         <inertial>
-            <origin xyz="-0.10843 -0.017483 0.016693" rpy="0 0 0" />
-            <mass value="0.060324" />
-            <inertia ixx="0.062243" ixy="-0.0082918" ixz="0.021613" iyy="0.44311" iyz="0.0044393" izz="0.45559" />
+            <origin xyz="-0.108431854063551 -0.0174825173011943 0.0166931623604918" rpy="0 0 0" />
+            <mass value="12.8506822129936" />
+            <inertia ixx="0.0622431800785935" ixy="-0.00829182508100419" ixz="0.0216125023529655" iyy="0.443114343298478" iyz="0.00443933027943639" izz="0.455586882289948" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -103,7 +103,7 @@
                 <mesh filename="package://kuka_urdf/meshes/link3.STL" />
             </geometry>
             <material name="">
-                <color rgba="0.66667 0.69804 0.76863 1" />
+                <color rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
             </material>
         </visual>
         <collision>
@@ -114,7 +114,7 @@
         </collision>
     </link>
     <joint name="joint3" type="continuous">
-        <origin xyz="0.00300600653973404 0.670462499033651 0" rpy="3.14159265358979 0 2.17118981711903" />
+        <origin xyz="0.003006 0.67046 0" rpy="3.1416 0 2.1712" />
         <parent link="link2" />
         <child link="link3" />
         <axis xyz="0 0 1" />
@@ -122,9 +122,9 @@
     </joint>
     <link name="link4">
         <inertial>
-            <origin xyz="0.0067406 0.13614 0.00014607" rpy="0 0 0" />
-            <mass value="0.060324" />
-            <inertia ixx="0.013835" ixy="-0.0012724" ixz="-7.8237E-06" iyy="0.0043138" iyz="1.8805E-06" izz="0.01404" />
+            <origin xyz="0.0067405596375737 0.136144607774841 0.000146066189957605" rpy="0 0 0" />
+            <mass value="2.38079247091277" />
+            <inertia ixx="0.0138353059805076" ixy="-0.00127244376727786" ixz="-7.82368986780341E-06" iyy="0.00431378170193686" iyz="1.88047630765234E-06" izz="0.014039768246805" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -132,7 +132,7 @@
                 <mesh filename="package://kuka_urdf/meshes/link4.STL" />
             </geometry>
             <material name="">
-                <color rgba="0.66667 0.69804 0.76863 1" />
+                <color rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
             </material>
         </visual>
         <collision>
@@ -143,7 +143,7 @@
         </collision>
     </link>
     <joint name="joint4" type="continuous">
-        <origin xyz="-0.44629918087112 -0.0224999999999995 0.032999999999999" rpy="3.14159265358979 1.28637430236672 -1.5707963267949" />
+        <origin xyz="-0.4463 -0.0225 0.033" rpy="3.1416 1.2864 -1.5708" />
         <parent link="link3" />
         <child link="link4" />
         <axis xyz="0 1 0" />
@@ -151,9 +151,9 @@
     </joint>
     <link name="link5">
         <inertial>
-            <origin xyz="-0.014805 1.0738E-06 0.055373" rpy="0 0 0" />
-            <mass value="0.060324" />
-            <inertia ixx="0.0054886" ixy="-6.1639E-07" ixz="0.00016939" iyy="0.011318" iyz="-6.3E-07" izz="0.0086777" />
+            <origin xyz="-0.0148054463817822 1.07375547930832E-06 0.0553734928689547" rpy="0 0 0" />
+            <mass value="1.73398183318851" />
+            <inertia ixx="0.00548860925507905" ixy="-6.16396633248213E-07" ixz="0.000169392757459791" iyy="0.0113184998854174" iyz="-6.2999526191212E-07" izz="0.00867768877245735" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -161,7 +161,7 @@
                 <mesh filename="package://kuka_urdf/meshes/link5.STL" />
             </geometry>
             <material name="">
-                <color rgba="0.66667 0.69804 0.76863 1" />
+                <color rgba="0.666666666666667 0.698039215686274 0.768627450980392 1" />
             </material>
         </visual>
         <collision>
@@ -172,7 +172,7 @@
         </collision>
     </link>
     <joint name="joint5" type="continuous">
-        <origin xyz="0 0.220200819128881 0" rpy="1.50631561095374 0 -3.14159265358979" />
+        <origin xyz="0 0.2202 0" rpy="1.5063 0 -3.1416" />
         <parent link="link4" />
         <child link="link5" />
         <axis xyz="1 0 0" />
@@ -180,9 +180,9 @@
     </joint>
     <link name="link6">
         <inertial>
-            <origin xyz="1.8876E-08 0.084587 1.1305E-08" rpy="0 0 0" />
-            <mass value="0.060324" />
-            <inertia ixx="8.7492E-05" ixy="-1.5672E-12" ixz="-6.3502E-10" iyy="0.00012957" iyz="-1.0119E-12" izz="8.7493E-05" />
+            <origin xyz="1.88762782071805E-08 0.0845870843735267 1.13046738636768E-08" rpy="0 0 0" />
+            <mass value="0.21569146659832" />
+            <inertia ixx="8.74922732123857E-05" ixy="-1.56715863896756E-12" ixz="-6.35023778905382E-10" iyy="0.000129565794251722" iyz="-1.01193800340038E-12" izz="8.74928320400638E-05" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -201,7 +201,7 @@
         </collision>
     </link>
     <joint name="joint6" type="continuous">
-        <origin xyz="-0.0159999999999904 0 0.161511009128483" rpy="1.5707963267949 0 -0.91580856418439" />
+        <origin xyz="-0.016 0 0.16151" rpy="1.5708 0 -0.91581" />
         <parent link="link5" />
         <child link="link6" />
         <axis xyz="0 1 0" />
@@ -209,9 +209,9 @@
     </joint>
     <link name="link7">
         <inertial>
-            <origin xyz="-4.4409E-16 0.019112 1.1102E-16" rpy="0 0 0" />
-            <mass value="0.060324" />
-            <inertia ixx="5.9908E-05" ixy="1.1964E-19" ixz="-5.0822E-21" iyy="3.092E-05" iyz="-1.8624E-19" izz="5.9908E-05" />
+            <origin xyz="3.33066907387547E-16 -0.0908883383174383 -6.66133814775094E-16" rpy="0 0 0" />
+            <mass value="0.0603242087036552" />
+            <inertia ixx="5.99081865280422E-05" ixy="1.19219887326043E-19" ixz="3.3881317890172E-21" iyy="3.09203946207794E-05" iyz="-1.78935710107471E-19" izz="5.99081865280422E-05" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -219,7 +219,7 @@
                 <mesh filename="package://kuka_urdf/meshes/link7.STL" />
             </geometry>
             <material name="">
-                <color rgba="0.21961 0.33333 1 1" />
+                <color rgba="0.219607843137255 0.333333333333333 1 1" />
             </material>
         </visual>
         <collision>
@@ -230,16 +230,16 @@
         </collision>
     </link>
     <joint name="joint7" type="fixed">
-        <origin xyz="0 0.0343289908715182 0" rpy="-3.14159265358978 -1.24624974571635 3.14159265358977" />
+        <origin xyz="0 0.14433 0" rpy="-3.1416 -1.2462 3.1416" />
         <parent link="link6" />
         <child link="link7" />
         <axis xyz="0 0 0" />
     </joint>
     <link name="tableBase">
         <inertial>
-            <origin xyz="0 -0.079293 1.1486E-17" rpy="0 0 0" />
-            <mass value="22.655" />
-            <inertia ixx="0.52204" ixy="3.0392E-17" ixz="-1.1033E-17" iyy="0.43516" iyz="1.0371E-17" izz="0.23349" />
+            <origin xyz="0 -0.0792927584491776 1.50712525224781E-17" rpy="0 0 0" />
+            <mass value="22.6545515868041" />
+            <inertia ixx="0.522042821248889" ixy="3.30989870144931E-17" ixz="-1.1032580492799E-17" iyy="0.435158464274667" iyz="1.07424706769485E-17" izz="0.233488306158436" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -247,7 +247,7 @@
                 <mesh filename="package://kuka_urdf/meshes/tableBase.STL" />
             </geometry>
             <material name="">
-                <color rgba="0.11373 0.11373 0.11373 1" />
+                <color rgba="0.113725490196078 0.113725490196078 0.113725490196078 1" />
             </material>
         </visual>
         <collision>
@@ -265,9 +265,9 @@
     </joint>
     <link name="tabelLink1">
         <inertial>
-            <origin xyz="0 0.030302 1.8336E-16" rpy="0 0 0" />
-            <mass value="0.060324" />
-            <inertia ixx="0.062419" ixy="1.2666E-17" ixz="1.0072E-17" iyy="0.05928" iyz="-2.8778E-17" izz="0.057372" />
+            <origin xyz="0 0.0303021162142364 1.84518277836174E-16" rpy="0 0 0" />
+            <mass value="7.28336977784291" />
+            <inertia ixx="0.0624189778466533" ixy="1.19244108636117E-17" ixz="1.01229731322522E-17" iyy="0.0592798871419012" iyz="-1.82557881092636E-17" izz="0.0573718491671926" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -293,9 +293,9 @@
     </joint>
     <link name="tableLink2">
         <inertial>
-            <origin xyz="0.048294 0.048294 0.0025" rpy="0 0 0" />
-            <mass value="0.32268" />
-            <inertia ixx="0.002326" ixy="0.00075258" ixz="-3.4381E-19" iyy="0.002326" iyz="7.5753E-20" izz="0.0046506" />
+            <origin xyz="0.0482939208025785 0.0482939208025785 0.0025" rpy="0 0 0" />
+            <mass value="0.32267569246235" />
+            <inertia ixx="0.00232599466891" ixy="0.000752577416661154" ixz="-3.42208860332207E-19" iyy="0.00232599466891" iyz="7.22985722035411E-20" izz="0.00465064485576807" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -321,9 +321,9 @@
     </joint>
     <link name="tableEeffortLink">
         <inertial>
-            <origin xyz="0 0.039615 2.7449E-16" rpy="0 0 0" />
-            <mass value="0.060324" />
-            <inertia ixx="0.051272" ixy="-7.472E-35" ixz="-2.4576E-34" iyy="0.094771" iyz="2.9633E-18" izz="0.051272" />
+            <origin xyz="0 0.203933823529412 -2.59511050081739E-18" rpy="0 0 0" />
+            <mass value="3.48926224058707" />
+            <inertia ixx="0.0189671011324169" ixy="-2.34879458835192E-35" ixz="-9.7412291491617E-35" iyy="0.0359978975332567" iyz="-9.89522079732159E-19" izz="0.0189671011324169" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -342,7 +342,7 @@
         </collision>
     </link>
     <joint name="tableEeffortJoint" type="fixed">
-        <origin xyz="0 0 0" rpy="1.5708 0 0" />
+        <origin xyz="0 0 -0.175" rpy="1.5708 0 0" />
         <parent link="tableLink2" />
         <child link="tableEeffortLink" />
         <axis xyz="0 0 0" />

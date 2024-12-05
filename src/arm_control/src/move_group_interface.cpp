@@ -86,37 +86,37 @@ int main(int argc, char **argv)
     text_pose.translation().x() = -1.0;
     visual_tools.publishText(text_pose, "MoveGroupInterface Demo", rvt::WHITE, rvt::XLARGE);
     visual_tools.trigger();
-    // visual_tools.prompt("Press 'next' to move to Point A");
+    visual_tools.prompt("Press 'next' to move to Point A");
 
-    // /********************************************************************************* */
-    // /*************************             任务一           ************************** */
-    // /********************************************************************************* */
-    // missionOne(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
-    // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
-    // visual_tools.deleteAllMarkers();
-    // visual_tools.trigger();
-    // /********************************************************************************* */
-    // /*************************             任务二           ************************** */
-    // /********************************************************************************* */
-    // missionTwo(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
-    // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
-    // visual_tools.deleteAllMarkers();
-    // visual_tools.trigger();
+    /********************************************************************************* */
+    /*************************             任务一           ************************** */
+    /********************************************************************************* */
+    missionOne(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
+    visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
+    visual_tools.deleteAllMarkers();
+    visual_tools.trigger();
+    /********************************************************************************* */
+    /*************************             任务二           ************************** */
+    /********************************************************************************* */
+    missionTwo(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
+    visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
+    visual_tools.deleteAllMarkers();
+    visual_tools.trigger();
 
-    // /********************************************************************************* */
-    // /***********************             附加任务一           ************************* */
-    // /********************************************************************************* */
-    // additonalTaskOne(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
-    // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
-    // visual_tools.deleteAllMarkers();
-    // visual_tools.trigger();
-    // /********************************************************************************* */
-    // /***********************             附加任务二           ************************* */
-    // /********************************************************************************* */
-    // additonalTaskTwo(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
-    // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
-    // visual_tools.deleteAllMarkers();
-    // visual_tools.trigger();
+    /********************************************************************************* */
+    /***********************             附加任务一           ************************* */
+    /********************************************************************************* */
+    additonalTaskOne(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
+    visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
+    visual_tools.deleteAllMarkers();
+    visual_tools.trigger();
+    /********************************************************************************* */
+    /***********************             附加任务二           ************************* */
+    /********************************************************************************* */
+    additonalTaskTwo(arm_group_interface, arm_joint_model_group, visual_tools, text_pose);
+    visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
+    visual_tools.deleteAllMarkers();
+    visual_tools.trigger();
     /********************************************************************************* */
     /***********************             附加任务三           ************************* */
     /********************************************************************************* */
@@ -497,7 +497,7 @@ void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_grou
         double phi = point.y * 2 * (5.0 / 9.0) * M_PI / 2; // 将y映射到[0, π/2] 纬度
         // 臂末端位置计算
         double D = 1.0;      // 转台中心到原点的距离
-        double d = 0.029;    // 旋转中心到球心的距离
+        double d = 0.059;    // 旋转中心到球心的距离
         double r = 0.25;     // 球的半径
         double offset = 0.4; // 臂末端执行器offset
         double x = sign(phi) * sin(phi) * d + D;

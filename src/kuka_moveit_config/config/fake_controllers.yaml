@@ -37,3 +37,5 @@ initial:  # Define initial robot poses per group
     pose: home
   - group: table_arm
     pose: home
+  - group: combine_group
+    pose: home

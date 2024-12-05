@@ -6,7 +6,7 @@ stomp/kuka_arm:
     num_iterations_after_valid: 0
     num_rollouts: 30
     max_rollouts: 30
-    initialization_method: 3  # [1 : LINEAR_INTERPOLATION, 2 : CUBIC_POLYNOMIAL, 3 : MININUM_CONTROL_COST]
+    initialization_method: 1  # [1 : LINEAR_INTERPOLATION, 2 : CUBIC_POLYNOMIAL, 3 : MININUM_CONTROL_COST]
     control_cost_weight: 0.0
   task:
     noise_generator:
@@ -45,7 +45,7 @@ stomp/kuka_hand:
     num_iterations_after_valid: 0
     num_rollouts: 30
     max_rollouts: 30
-    initialization_method: 3  # [1 : LINEAR_INTERPOLATION, 2 : CUBIC_POLYNOMIAL, 3 : MININUM_CONTROL_COST]
+    initialization_method: 1  # [1 : LINEAR_INTERPOLATION, 2 : CUBIC_POLYNOMIAL, 3 : MININUM_CONTROL_COST]
     control_cost_weight: 0.0
   task:
     noise_generator:
@@ -84,7 +84,7 @@ stomp/table_arm:
     num_iterations_after_valid: 0
     num_rollouts: 30
     max_rollouts: 30
-    initialization_method: 3  # [1 : LINEAR_INTERPOLATION, 2 : CUBIC_POLYNOMIAL, 3 : MININUM_CONTROL_COST]
+    initialization_method: 1  # [1 : LINEAR_INTERPOLATION, 2 : CUBIC_POLYNOMIAL, 3 : MININUM_CONTROL_COST]
     control_cost_weight: 0.0
   task:
     noise_generator:
@@ -123,7 +123,7 @@ stomp/table_hand:
     num_iterations_after_valid: 0
     num_rollouts: 30
     max_rollouts: 30
-    initialization_method: 3  # [1 : LINEAR_INTERPOLATION, 2 : CUBIC_POLYNOMIAL, 3 : MININUM_CONTROL_COST]
+    initialization_method: 1  # [1 : LINEAR_INTERPOLATION, 2 : CUBIC_POLYNOMIAL, 3 : MININUM_CONTROL_COST]
     control_cost_weight: 0.0
   task:
     noise_generator:
@@ -162,7 +162,7 @@ stomp/combine_group:
     num_iterations_after_valid: 0
     num_rollouts: 30
     max_rollouts: 30
-    initialization_method: 3  # [1 : LINEAR_INTERPOLATION, 2 : CUBIC_POLYNOMIAL, 3 : MININUM_CONTROL_COST]
+    initialization_method: 1  # [1 : LINEAR_INTERPOLATION, 2 : CUBIC_POLYNOMIAL, 3 : MININUM_CONTROL_COST]
     control_cost_weight: 0.0
   task:
     noise_generator:
