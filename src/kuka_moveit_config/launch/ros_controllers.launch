@@ -6,6 +6,6 @@
 
   <!-- Load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" args="kuka_arm_controller table_arm_controller combine_group_controller "/>
+    output="screen" args="table_arm_controller kuka_arm_controller "/>
 
 </launch>
