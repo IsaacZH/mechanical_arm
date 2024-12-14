@@ -103,7 +103,9 @@
         "image": "cpp",
         "regex": "cpp",
         "slist": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "bufferobject": "cpp",
+        "vec4ub": "cpp"
     },
     "cmake.ignoreCMakeListsMissing": true
 }

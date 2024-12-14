@@ -13,10 +13,6 @@ struct Point
 {
     double x, y;
 };
-int sign(double value)
-{
-    return (value > 0) - (value < 0);
-}
 
 void hilbert(int n, std::vector<Point> &points, double x0, double y0);
 void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterface &arm_group_interface,
@@ -120,7 +116,9 @@ int main(int argc, char **argv)
     /********************************************************************************* */
     /***********************             附加任务三           ************************* */
     /********************************************************************************* */
-    additonalTaskThree(arm_group_interface, arm_joint_model_group, table_group_interface, table_joint_model_group, combine_group_interface, combine_joint_model_group, text_pose);
+    additonalTaskThree(arm_group_interface, arm_joint_model_group, table_group_interface, 
+                       table_joint_model_group, combine_group_interface, 
+                       combine_joint_model_group, text_pose);
     visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue");
     visual_tools.deleteAllMarkers();
     visual_tools.trigger();
@@ -203,15 +201,14 @@ void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterf
         ROS_INFO("Target Orientation (Euler angles) - roll: %.6f, pitch: %.6f, yaw: %.6f", euler_angles[2], euler_angles[1], euler_angles[0]);
 
         geometry_msgs::Pose adjusted_pose = target_pose;
-        adjusted_pose.orientation.x = std::round(quaternion.x() * 1e8) / 1e8;
-        adjusted_pose.orientation.y = std::round(quaternion.y() * 1e8) / 1e8;
-        adjusted_pose.orientation.z = std::round(quaternion.z() * 1e8) / 1e8;
-        adjusted_pose.orientation.w = std::round(quaternion.w() * 1e8) / 1e8;
+        adjusted_pose.orientation.x = quaternion.x();
+        adjusted_pose.orientation.y = quaternion.y();
+        adjusted_pose.orientation.z = quaternion.z();
+        adjusted_pose.orientation.w = quaternion.w();
 
         waypoints.push_back(adjusted_pose);
     }
 
-    // 一次性规划所有路径点
     std::vector<geometry_msgs::Pose> temp_points;
     moveit_msgs::RobotTrajectory trajectory;
     double fraction = 0.0;
@@ -224,15 +221,18 @@ void Execute_CartesianPath_AllAtOnce(moveit::planning_interface::MoveGroupInterf
         temp_point_cnt++;
         if (temp_point_cnt >= per_execute_cnt || i == waypoints.size() - 1) // 满数量就规划一次
         {
+            ros::Time start_time = ros::Time::now(); // 记录开始时间
             while (fraction < 0.99 && attempts < max_attempts)
             {
                 fraction = arm_group_interface.computeCartesianPath(temp_points, eef_step, trajectory);
                 attempts++;
             }
 
-            if (fraction > 0.10) // 如果规划成功率高于10%
+            if (fraction > 0.90) // 如果规划成功率高于90%
             {
                 ROS_INFO("Successfully computed Cartesian path (%.2f%% achieved) after %d attempts", fraction * 100.0, attempts);
+                ros::Duration solve_time = ros::Time::now() - start_time; // 计算求解时间
+                ROS_INFO("%d point planning time: %.2f ms", temp_point_cnt, solve_time.toSec() * 1000.0); // 打印求解时间
                 moveit::planning_interface::MoveGroupInterface::Plan cartesian_plan;
                 cartesian_plan.trajectory_ = trajectory;
                 visual_tools.publishTrajectoryLine(trajectory, arm_joint_model_group);
@@ -269,9 +269,9 @@ std::vector<Point> generateCycloid(const std::vector<Point> &hilbertPoints, doub
         double ny = vx / length;
 
         // 在两点之间生成摆线点
-        for (int j = 0; j <= frequency; ++j)
+        for (double j = 0; j <= frequency; ++j)
         {
-            double t = static_cast<double>(j) / frequency;   // 插值系数
+            double t = j / frequency;                        // 插值系数
             double px = p1.x + t * vx;                       // 当前点的x
             double py = p1.y + t * vy;                       // 当前点的y
             double offset = radius * std::sin(M_PI * 2 * t); // 摆线偏移量
@@ -292,11 +292,9 @@ void missionOne(moveit::planning_interface::MoveGroupInterface &arm_group_interf
     std::vector<double> joint_group_positions;
     moveit::core::RobotStatePtr current_state = arm_group_interface.getCurrentState();
     current_state->copyJointGroupPositions(arm_joint_model_group, joint_group_positions);
-
     // 设置A点的关节位置
     joint_group_positions[0] = -M_PI / 2;
-    joint_group_positions[1] = M_PI / 6;
-
+    joint_group_positions[1] = M_PI / 9;
     arm_group_interface.setJointValueTarget(joint_group_positions);
 
     // 规划并移动到A点
@@ -356,40 +354,60 @@ void missionTwo(moveit::planning_interface::MoveGroupInterface &arm_group_interf
     bool success = (arm_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
     if (success)
     {
-        // 可视化轨迹
-        visual_tools.publishTrajectoryLine(my_plan.trajectory_, arm_joint_model_group);
-        visual_tools.trigger();
         arm_group_interface.move();
     }
 
     int order = 4; // 希尔伯特曲线的阶数
     std::vector<Point> hilbert_raw_points;
     hilbert(order, hilbert_raw_points, 0, 0);
-
-    // // 将生成的点缩放到范围内
-    double w = 1.2;
-    double h = 1.2;
-    // // 设置笛卡尔路径的目标位姿
+    // 将生成的点缩放到范围内
+    double w = 0.8;
+    double h = 0.8;
+    // 设置笛卡尔路径的目标位姿
     std::vector<geometry_msgs::Pose> waypoints;
+    std::vector<geometry_msgs::Pose> firstpoint;
     geometry_msgs::Pose target_pose = arm_group_interface.getCurrentPose().pose;
-
+    int i = 0;
     for (const auto &point : hilbert_raw_points)
     {
-        target_pose.position.x = - 1; // 固定高度，确保末端垂直于运动平面
+        target_pose.position.x = - 1.2; // 固定高度，确保末端垂直于运动平面
         target_pose.position.y = (point.x) * w;
-        target_pose.position.z = (point.y + 0.5) * h + 0.1;
+        target_pose.position.z = (point.y + 0.5) * h + 0.13;
+        target_pose.orientation.z = 0.707107;
+        target_pose.orientation.x = 0;
+        target_pose.orientation.y = 0;
+        target_pose.orientation.w = 0.707107;
         waypoints.push_back(target_pose);
+        if (i == 0)
+        {
+            firstpoint.push_back(target_pose);
+            i++;
+        }
+        
     }
 
     // 规划笛卡尔路径
     moveit_msgs::RobotTrajectory trajectory;
+    moveit_msgs::RobotTrajectory trajectory1;
+    moveit::planning_interface::MoveGroupInterface::Plan cartesian_plan;
+    moveit::planning_interface::MoveGroupInterface::Plan plan1;
     const double eef_step = 0.01;
-    double fraction = arm_group_interface.computeCartesianPath(waypoints, eef_step, trajectory);
+    
+    arm_group_interface.computeCartesianPath(firstpoint, eef_step, trajectory1);
+    plan1.trajectory_ = trajectory1;
+    arm_group_interface.execute(plan1);
+
+    double fraction = 0.0;
+    int attempts = 0;
+    while (fraction < 0.99 && attempts < 100)
+    {
+        fraction = arm_group_interface.computeCartesianPath(waypoints, eef_step, trajectory);
+        attempts++;
+    } 
 
     ROS_INFO("Successfully computed Cartesian path (%.2f%% achieved)", fraction * 100.0);
     visual_tools.publishText(text_pose, "Executing Cartesian Path", rvt::WHITE, rvt::XLARGE);
     visual_tools.publishTrajectoryLine(trajectory, arm_joint_model_group); // 可视化轨迹
-    moveit::planning_interface::MoveGroupInterface::Plan cartesian_plan;
     cartesian_plan.trajectory_ = trajectory;
     visual_tools.trigger();
     arm_group_interface.execute(cartesian_plan);
@@ -419,14 +437,15 @@ void additonalTaskOne(moveit::planning_interface::MoveGroupInterface &arm_group_
 
     for (const auto &point : hilbert_raw_points)
     {
-        double theta = point.x * M_PI;                     // 将x映射到[0, π]
-        double phi = point.y * 2 * (5.0 / 6.0) * M_PI / 2; // 将y映射到[0, π]
+        double theta = point.x * M_PI;                     // 将x映射到[0, π/2]
+        double phi = point.y * 2 * (5.0 / 6.0) * M_PI / 2; // 将y映射到[0, π/2]
         temp_pose.position.x = sphere_center.x + radius * sin(phi) * cos(theta);
         temp_pose.position.y = sphere_center.y + radius * sin(phi) * sin(theta);
         temp_pose.position.z = sphere_center.z + radius * cos(phi);
         waypoints.push_back(temp_pose);
     }
-    Execute_CartesianPath_AllAtOnce(arm_group_interface, arm_joint_model_group, visual_tools, waypoints, sphere_center, 0.05, 100, 5000);
+    Execute_CartesianPath_AllAtOnce(arm_group_interface, arm_joint_model_group, visual_tools, 
+                                    waypoints, sphere_center, 0.05, 100, 5000);
 }
 
 void additonalTaskTwo(moveit::planning_interface::MoveGroupInterface &arm_group_interface,
@@ -499,9 +518,9 @@ void additonalTaskThree(moveit::planning_interface::MoveGroupInterface &arm_grou
         double D = 1.0;      // 转台中心到原点的距离
         double d = 0.059;    // 旋转中心到球心的距离
         double r = 0.25;     // 球的半径
-        double offset = 0.4; // 臂末端执行器offset
-        double x = sign(phi) * sin(phi) * d + D;
-        double z = -abs(cos(phi) * d) + r + offset;
+        double offset = 0.42; // 臂末端执行器offset
+        double x = sin(phi) * d + D;
+        double z = -cos(phi) * d + r + offset;
 
         // 设置臂末端笛卡尔路径目标位置
         geometry_msgs::Pose target_pose = arm_group_interface.getCurrentPose().pose;
